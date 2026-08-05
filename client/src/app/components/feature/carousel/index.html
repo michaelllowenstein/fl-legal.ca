@@ -1,0 +1,67 @@
+<div class="relative overflow-hidden bg-brand-dark select-none" [style.height]="height()">
+  
+<!-- Slides -->
+@for (slide of slides(); track $index) {
+  <div
+    class="absolute inset-0 transition-opacity duration-700"
+    [class.opacity-100]="currentIndex() === $index"
+    [class.opacity-0]="currentIndex() !== $index">
+
+    <!-- Image -->
+    <img
+      [src]="slide.imageUrl"
+      [alt]="slide.heading ?? ''"
+      class="absolute inset-0 w-full h-full object-cover object-center w-max" />
+
+    <!-- Overlay gradient -->
+    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80
+                via-brand-dark/30 to-transparent"></div>
+
+    <!-- Caption -->
+    @if (slide.heading) {
+      <div class="absolute bottom-12 left-0 right-0 text-center px-6 animate-fade-in">
+        <h2 class="font-display text-white text-3xl md:text-5xl font-semibold drop-shadow-lg">
+          {{ slide.heading }}
+        </h2>
+        @if (slide.subheading) {
+          <p class="mt-2 font-sans text-white/80 text-base md:text-lg">
+            {{ slide.subheading }}
+          </p>
+        }
+      </div>
+    }
+  </div>
+}
+
+  <!-- Prev / Next — outside @for, rendered once -->
+  <button
+    class="absolute left-3 top-1/2 -translate-y-1/2 bg-brand-dark/50
+           hover:bg-brand-dark/80 text-white rounded-full p-2 transition-colors"
+    (click)="prev()"
+    aria-label="Previous slide">
+    <app-fl-icon name="chevron-left" class="w-6 h-6" />
+  </button>
+  <button
+    class="absolute right-3 top-1/2 -translate-y-1/2 bg-brand-dark/50
+           hover:bg-brand-dark/80 text-white rounded-full p-2 transition-colors"
+    (click)="next()"
+    aria-label="Next slide">
+    <app-fl-icon name="chevron-right" class="w-6 h-6" />
+  </button>
+
+  <!-- Dots — outside @for, rendered once -->
+  <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+    @for (slide of slides(); track $index) {
+      <button
+        class="h-2 rounded-full transition-all duration-300"
+        [class.w-6]="currentIndex() === $index"
+        [class.bg-brand-gold]="currentIndex() === $index"
+        [class.w-2]="currentIndex() !== $index"
+        [class.bg-white/40]="currentIndex() !== $index"
+        (click)="goTo($index)"
+        [attr.aria-label]="'Slide ' + ($index + 1)">
+      </button>
+    }
+  </div>
+
+</div>

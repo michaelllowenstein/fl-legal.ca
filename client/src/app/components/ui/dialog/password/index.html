@@ -1,0 +1,74 @@
+
+    <div
+      class="bg-white rounded-2xl shadow-dialog w-full max-w-sm p-8 animate-scale-in"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pwd-title"
+      (click)="$event.stopPropagation()">
+ 
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+          <app-fl-icon name="lock-closed" class="w-5 h-5 text-brand" />
+        </div>
+        <div>
+          <h2 id="pwd-title" class="font-display text-brand text-xl font-semibold">
+            Editor Access
+          </h2>
+          <p class="font-sans text-gray-400 text-xs mt-0.5">
+            Enter your password to edit site content
+          </p>
+        </div>
+      </div>
+ 
+      <!-- Field -->
+      <div class="space-y-1.5 mb-6">
+        <label
+          for="editor-password"
+          class="block font-sans text-xs font-semibold uppercase tracking-wide text-gray-500">
+          Password
+        </label>
+        <input
+          id="editor-password"
+          type="password"
+          [(ngModel)]="password"
+          (keyup.enter)="submit()"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          class="w-full border rounded-lg px-3 py-2.5 font-sans text-sm text-brand
+                 focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent
+                 transition-shadow"
+          [class.border-red-400]="error()"
+          [class.border-gray-300]="!error()" />
+        @if (error()) {
+          <p class="font-sans text-xs text-red-500 flex items-center gap-1 animate-fade-in">
+            <app-fl-icon name="x-mark" class="w-3 h-3" />
+            {{ error() }}
+          </p>
+        }
+      </div>
+ 
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button
+          class="flex-1 font-sans text-sm text-gray-500 border border-gray-200
+                 rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          class="flex-1 font-sans text-sm font-medium bg-brand hover:bg-brand-light
+                 text-white rounded-lg py-2.5 transition-colors disabled:opacity-40
+                 flex items-center justify-center gap-2"
+          [disabled]="loading()"
+          (click)="submit()">
+          @if (loading()) {
+            <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+          } @else {
+            <app-fl-icon name="lock-closed" class="w-4 h-4" />
+            Unlock
+          }
+        </button>
+      </div>
+ 
+    </div>

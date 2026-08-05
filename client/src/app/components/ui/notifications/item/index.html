@@ -1,0 +1,64 @@
+
+    <div
+      class="item"
+      [class.unread]="!notification().isRead && !notification().isDismissed"
+      [class.read]="notification().isRead || notification().isDismissed"
+      [style.--accent]="typeConfig().accent"
+      [style.--bg]="typeConfig().bg"
+    >
+      <!-- Type icon -->
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+             [innerHTML]="typeConfig().icon">
+        </svg>
+      </div>
+ 
+      <!-- Content -->
+      <div class="content">
+        <p class="notif-title">{{ notification().title }}</p>
+ 
+        <p
+          class="notif-body"
+          [class.expanded]="bodyExpanded"
+          (click)="bodyExpanded = !bodyExpanded"
+          [title]="bodyExpanded ? 'Click to collapse' : 'Click to expand'"
+        >
+          {{ notification().body }}
+        </p>
+ 
+        <p class="notif-meta">{{ formatDate(notification().createdAt) }}</p>
+ 
+        <div class="actions">
+          <!-- Type badge -->
+          <span class="badge">{{ notification().type }}</span>
+ 
+          <!-- CTA link -->
+          @if (notification().cta) {
+            <a
+              class="cta-btn"
+              [href]="notification().cta!.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              (click)="onCtaClick()"
+            >
+              {{ notification().cta!.label }}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </a>
+          }
+ 
+          <!-- Mark as read (only if unread) -->
+          @if (!notification().isRead && !notification().isDismissed) {
+            <button class="read-btn" (click)="onRead()">Mark read</button>
+          }
+ 
+          <!-- Dismiss button (always visible, rightmost) -->
+          <button class="dismiss-btn" (click)="onDismiss()" title="Dismiss for this session">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>

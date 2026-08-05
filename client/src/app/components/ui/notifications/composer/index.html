@@ -1,0 +1,147 @@
+
+    <div class="composer">
+      <!-- ── Create notification ── -->
+      <p class="section-title">Publish Notification</p>
+ 
+      <div class="form-grid">
+        <!-- Title -->
+        <div class="field">
+          <label for="n-title">Title</label>
+          <input
+            id="n-title"
+            type="text"
+            placeholder="e.g. New Feature: Calendar Sync"
+            maxlength="80"
+            [(ngModel)]="draft().title"
+          />
+          <p class="char-count" [class.over]="draft().title.length > 70">
+            {{ draft().title.length }}/80
+          </p>
+        </div>
+ 
+        <!-- Body -->
+        <div class="field">
+          <label for="n-body">Body</label>
+          <textarea
+            id="n-body"
+            placeholder="Describe the notification…"
+            maxlength="400"
+            [(ngModel)]="draft().body"
+          ></textarea>
+          <p class="char-count" [class.over]="draft().body.length > 350">
+            {{ draft().body.length }}/400
+          </p>
+        </div>
+ 
+        <!-- Type + Audience -->
+        <div class="row-2">
+          <div class="field">
+            <label for="n-type">Type</label>
+            <select id="n-type" [(ngModel)]="draft().type">
+              <option value="feature">✦ Feature</option>
+              <option value="info">ℹ Info</option>
+              <option value="warning">⚠ Warning</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="n-audience">Audience</label>
+            <select id="n-audience" [(ngModel)]="draft().audience">
+              <option value="all">All Users</option>
+              <option value="lawyers">Lawyers Only</option>
+              <option value="editors">Editors Only</option>
+            </select>
+          </div>
+        </div>
+ 
+        <!-- CTA (optional) -->
+        <div class="cta-group">
+          <span class="cta-label">Call to Action (optional)</span>
+          <div class="field">
+            <label for="n-cta-label">Button Label</label>
+            <input
+              id="n-cta-label"
+              type="text"
+              placeholder="Learn more"
+              [(ngModel)]="draft().ctaLabel"
+            />
+          </div>
+          <div class="field">
+            <label for="n-cta-url">URL</label>
+            <input
+              id="n-cta-url"
+              type="url"
+              placeholder="https://…"
+              [(ngModel)]="draft().ctaUrl"
+            />
+          </div>
+        </div>
+ 
+        <!-- Expiry (optional) -->
+        <div class="field">
+          <label for="n-expires">Expires (optional)</label>
+          <input
+            id="n-expires"
+            type="datetime-local"
+            [(ngModel)]="draft().expiresAt"
+          />
+        </div>
+      </div>
+ 
+      <!-- Actions -->
+      <div class="form-actions">
+        <button
+          class="btn btn-primary"
+          [disabled]="!canPublish() || publishing()"
+          (click)="publish()"
+        >
+          {{ publishing() ? 'Publishing…' : 'Publish' }}
+        </button>
+        <button class="btn btn-ghost" (click)="resetDraft()">Clear</button>
+      </div>
+ 
+      @if (statusMsg()) {
+        <p class="status-msg" [class.success]="statusOk()" [class.error]="!statusOk()">
+          {{ statusMsg() }}
+        </p>
+      }
+ 
+      <hr class="divider" />
+ 
+      <!-- ── Existing notifications ── -->
+      <p class="section-title">Existing Notifications</p>
+ 
+      @if (loading()) {
+        <p class="empty-list">Loading…</p>
+      } @else if (existing().length === 0) {
+        <p class="empty-list">No notifications yet.</p>
+      } @else {
+        <div class="notif-list">
+          @for (n of existing(); track n.id) {
+            <div class="notif-card">
+              <div class="notif-card-info">
+                <p class="notif-card-title">{{ n.title }}</p>
+                <p class="notif-card-meta">{{ formatDate(n.createdAt) }}</p>
+                <div class="notif-card-badges">
+                  <span class="pill pill-type-{{ n.type }}">{{ n.type }}</span>
+                  <span class="pill pill-aud-{{ n.audience }}">{{ n.audience }}</span>
+                  <span class="pill pill-status-{{ n.status }}">{{ n.status }}</span>
+                  @if (n.expiresAt) {
+                    <span class="pill" style="background:#fff7ed;color:#c2410c;">
+                      expires {{ formatDate(n.expiresAt) }}
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="notif-card-actions">
+                @if (n.status === 'active') {
+                  <button class="icon-btn archive" (click)="archive(n.id)">Archive</button>
+                } @else {
+                  <button class="icon-btn restore" (click)="restore(n.id)">Restore</button>
+                }
+                <button class="icon-btn delete" (click)="delete(n.id)">Delete</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>

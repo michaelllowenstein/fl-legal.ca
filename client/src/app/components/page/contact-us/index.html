@@ -1,0 +1,128 @@
+<!-- Banner -->
+<div class="bg-brand-dark py-16 px-4 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(184,147,42,0.1),transparent_55%)] pointer-events-none"></div>
+  <span class="inline-block font-sans text-brand-gold text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">
+    Reach Out
+  </span>
+  <h1 class="font-display text-white text-4xl md:text-5xl font-semibold mt-1">Contact Us</h1>
+  <p class="font-sans text-white/50 text-sm mt-3">We're here to help — get in touch today</p>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 animate-fade-up">
+  <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+
+    <!-- ── Contact details ───────────────────────────────────────────────── -->
+    <div class="space-y-8">
+
+      <div>
+        <h2 class="font-display text-brand text-2xl font-semibold mb-6">Our Office</h2>
+
+        <ul class="space-y-5">
+
+          <!-- Address -->
+          <li class="flex gap-4">
+            <div class="w-11 h-11 rounded-xl bg-brand/8 flex items-center justify-center shrink-0">
+              <app-fl-icon name="map-pin" class="w-5 h-5 text-brand" />
+            </div>
+            <div class="pt-0.5">
+              <p class="font-sans text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">
+                Address
+              </p>
+              <p class="font-body text-gray-700 leading-relaxed">
+                #750, 11012 Macleod Trail S.E.<br>Calgary, Alberta T2J 7E4
+              </p>
+              <app-maps-link
+                class="mt-1.5 block"
+                [lat]="officeLat()"
+                [long]="officeLong()"
+                [pointOfInterest]="officeName"
+                label="Get Directions" />
+            </div>
+          </li>
+
+          <!-- Phone -->
+          <li class="flex gap-4">
+            <div class="w-11 h-11 rounded-xl bg-brand/8 flex items-center justify-center shrink-0">
+              <app-fl-icon name="phone" class="w-5 h-5 text-brand" />
+            </div>
+            <div class="pt-0.5">
+              <p class="font-sans text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Phone</p>
+              <a
+                href="tel:+14032912594"
+                class="font-body text-gray-700 hover:text-brand-light transition-colors text-base">
+                (403)-291-2594
+              </a>
+            </div>
+          </li>
+
+          <!-- Email -->
+          <li class="flex gap-4">
+            <div class="w-11 h-11 rounded-xl bg-brand/8 flex items-center justify-center shrink-0">
+              <app-fl-icon name="envelope" class="w-5 h-5 text-brand" />
+            </div>
+            <div class="pt-0.5">
+              <p class="font-sans text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Email</p>
+              <a
+                href="mailto:friclow@gmail.com"
+                class="font-body text-gray-700 hover:text-brand-light transition-colors">
+                friclow&#64;gmail.com
+              </a>
+            </div>
+          </li>
+
+          <!-- Hours -->
+          <li class="flex gap-4">
+            <div class="w-11 h-11 rounded-xl bg-brand/8 flex items-center justify-center shrink-0">
+              <app-fl-icon name="calendar" class="w-5 h-5 text-brand" />
+            </div>
+            <div class="pt-0.5">
+              <p class="font-sans text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">
+                Office Hours
+              </p>
+              <p class="font-body text-gray-700">Monday – Friday: 8:30 AM – 4:30 PM</p>
+              <p class="font-body text-gray-500 text-sm">Saturday – Sunday: Closed</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CTA card -->
+      <div class="bg-brand-cream rounded-3xl p-7 border border-brand-gold/20">
+        <h3 class="font-display text-brand text-lg font-semibold mb-2">Ready to get started?</h3>
+        <p class="font-body text-gray-600 text-sm leading-relaxed mb-5">
+          Since 1982, individuals and businesses in Calgary have trusted Fric,
+          Lowenstein &amp; Co. LLP for sound legal representation. Whatever your legal
+          needs, we are devoted to defending your rights.
+        </p>
+        <button
+          (click)="openInquiry()"
+          class="inline-flex items-center gap-2 font-sans text-sm bg-brand
+                 hover:bg-brand-light text-white font-medium px-5 py-2.5 rounded-xl
+                 transition-all duration-200 hover:-translate-y-0.5
+                 shadow-md shadow-brand/15">
+          <app-fl-icon name="envelope" class="w-4 h-4" />
+          Send an Inquiry
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Map ───────────────────────────────────────────────────────────── -->
+    <div class="space-y-4">
+      <div class="rounded-3xl overflow-hidden shadow-card border border-gray-200
+                  aspect-[4/3] lg:aspect-auto lg:min-h-[480px] sticky top-24">
+        <iframe
+          class="w-full h-full min-h-[380px]"
+          style="border:0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          [src]="mapsEmbedUrl"
+          title="Office location">
+        </iframe>
+      </div>
+      <p class="font-sans text-xs text-gray-400 text-center">
+        #750, 11012 Macleod Trail S.E. — Southcentre Executive Tower, Calgary
+      </p>
+    </div>
+
+  </div>
+</div>

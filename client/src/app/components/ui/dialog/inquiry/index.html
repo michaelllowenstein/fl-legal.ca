@@ -1,0 +1,149 @@
+<div class="bg-white rounded-2xl shadow-dialog w-full max-w-md animate-scale-in" style="color-scheme: light;"
+  role="dialog" aria-modal="true" aria-labelledby="inquiry-title" (click)="$event.stopPropagation()">
+
+  <!-- ── Submitted state ─────────────────────────────────────────────── -->
+  @if (submitted()) {
+  <div class="p-8 text-center animate-fade-in">
+    <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-5">
+      <app-fl-icon name="check" class="w-8 h-8 text-emerald-600" />
+    </div>
+    <h3 class="font-display text-brand text-xl font-semibold mb-2">
+      Message Sent
+    </h3>
+    <p class="font-sans text-gray-500 text-sm leading-relaxed mb-1">
+      Thank you, <strong class="text-brand font-medium">{{ firstName() }}</strong>.
+      We'll be in touch within one business day.
+    </p>
+    @if (isPriority()) {
+    <p class="font-sans text-brand-gold text-xs font-semibold uppercase tracking-wide mt-2">
+      ★ Flagged as priority
+    </p>
+    }
+    <button class="mt-6 font-sans text-sm text-brand-light hover:text-brand hover:underline transition-colors"
+      (click)="close()">
+      Close
+    </button>
+  </div>
+
+  } @else {
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="flex items-start justify-between p-8 pb-0">
+    <div>
+      <h2 id="inquiry-title" class="font-display text-brand text-2xl font-semibold">
+        Get in Touch
+      </h2>
+      <p class="font-sans text-gray-400 text-sm mt-1">
+        We respond within one business day.
+      </p>
+    </div>
+    <button class="text-gray-300 hover:text-gray-500 p-1 rounded transition-colors -mt-1 -mr-1" aria-label="Close"
+      (click)="close()">
+      <app-fl-icon name="x-mark" class="w-5 h-5" />
+    </button>
+  </div>
+
+  <!-- ── Form ────────────────────────────────────────────────────── -->
+  <div class="p-8 pt-6 space-y-4">
+
+    <!-- Priority toggle -->
+    <label class="flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer
+                   transition-colors select-none" [class]="isPriority()
+              ? 'bg-brand-gold/10 border-brand-gold/40'
+              : 'bg-brand-cream border-brand-gold/20 hover:border-brand-gold/40'">
+      <input type="checkbox" [ngModel]="isPriority()" (ngModelChange)="setPriority($event)"
+        class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0" />
+      <span class="font-sans text-sm text-brand leading-snug">
+        This is an <strong class="font-semibold">urgent matter</strong>
+        requiring priority attention
+      </span>
+    </label>
+
+    <!-- Name -->
+    <div>
+      <label for="inq-name" class="fl-label">Full Name *</label>
+      <input id="inq-name" type="text" [(ngModel)]="form.name" placeholder="Jane Smith" autocomplete="name"
+        class="fl-input" [class.border-red-400]="errors().name" [class.border-gray-300]="!errors().name" />
+      @if (errors().name) {
+      <p class="fl-error">{{ errors().name }}</p>
+      }
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label for="inq-email" class="fl-label">Email Address *</label>
+      <input id="inq-email" type="email" [(ngModel)]="form.email" placeholder="jane@example.com" autocomplete="email"
+        class="fl-input" [class.border-red-400]="errors().email" [class.border-gray-300]="!errors().email" />
+      @if (errors().email) {
+      <p class="fl-error">{{ errors().email }}</p>
+      }
+    </div>
+
+    <!-- Phone -->
+    <div>
+      <label for="inq-phone" class="fl-label">
+        Phone
+        <span class="normal-case text-gray-400 font-normal ml-1">(optional)</span>
+      </label>
+      <input id="inq-phone" type="tel" [(ngModel)]="form.phone" placeholder="(403) 555-0100" autocomplete="tel"
+        class="fl-input border-gray-300" />
+    </div>
+
+    <!-- Practice area — only shown for priority -->
+    @if (isPriority()) {
+    <div class="animate-fade-in">
+      <label for="inq-area" class="fl-label">Area of Law</label>
+      <select id="inq-area" [(ngModel)]="form.practiceArea" class="fl-input border-gray-300">
+        <option value="">Select practice area…</option>
+        @for (area of practiceAreas; track area) {
+        <option [value]="area">{{ area }}</option>
+        }
+      </select>
+    </div>
+    }
+
+    <!-- Message -->
+    <div>
+      <label for="inq-message" class="fl-label">Message *</label>
+      <textarea id="inq-message" [(ngModel)]="form.message" rows="4" placeholder="Briefly describe your matter…"
+        class="fl-input resize-none" [class.border-red-400]="errors().message"
+        [class.border-gray-300]="!errors().message">
+            </textarea>
+      @if (errors().message) {
+      <p class="fl-error">{{ errors().message }}</p>
+      }
+    </div>
+
+    <!-- Server error -->
+    @if (serverError()) {
+    <p class="font-sans text-xs text-red-500 flex items-center gap-1.5 animate-fade-in">
+      <app-fl-icon name="x-mark" class="w-3 h-3 shrink-0" />
+      {{ serverError() }}
+    </p>
+    }
+
+    <!-- Submit -->
+    <button class="w-full font-sans text-sm font-semibold rounded-xl py-3
+                   flex items-center justify-center gap-2 transition-colors
+                   disabled:opacity-40" [class]="isPriority()
+              ? 'bg-brand-gold hover:bg-yellow-500 text-brand-dark'
+              : 'bg-brand hover:bg-brand-light text-white'" [disabled]="loading()" (click)="submit()">
+      @if (loading()) {
+      <span class="w-4 h-4 rounded-full border-2 border-current/30 border-t-current animate-spin"></span>
+      } @else {
+      {{ isPriority() ? '★ Send Priority Inquiry' : 'Send Inquiry' }}
+      <app-fl-icon name="arrow-right" class="w-4 h-4" />
+      }
+    </button>
+
+    <!-- ── Test-fill (dev / staging only) ──────────────────────── -->
+    @if (showTestFill()) {
+    <button type="button" (click)="fillTestData()" class="w-full font-sans text-[11px] font-medium text-gray-400
+                     border border-dashed border-gray-300 rounded-lg py-2
+                     hover:text-amber-600 hover:border-amber-400 transition-colors">
+      ⚙ Fill test data
+    </button>
+    }
+
+  </div>
+  }
+</div>

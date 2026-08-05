@@ -1,0 +1,251 @@
+
+    .composer {
+      font-family: inherit;
+    }
+ 
+    .section-title {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #475569;
+      margin: 0 0 1rem;
+    }
+ 
+    /* Form */
+    .form-grid {
+      display: grid;
+      gap: 0.875rem;
+    }
+ 
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+ 
+    .field label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #475569;
+    }
+ 
+    .field input,
+    .field textarea,
+    .field select {
+      font-size: 0.8125rem;
+      color: #1e293b;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.12s, box-shadow 0.12s;
+      outline: none;
+      font-family: inherit;
+    }
+ 
+    .field textarea {
+      resize: vertical;
+      min-height: 5rem;
+    }
+ 
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+      background: #fff;
+    }
+ 
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+ 
+    .cta-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+    }
+ 
+    .cta-label {
+      grid-column: 1 / -1;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+ 
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 0.5rem;
+    }
+ 
+    .btn {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: filter 0.12s, opacity 0.12s;
+    }
+ 
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+ 
+    .btn-primary {
+      background: #1e293b;
+      color: #fff;
+    }
+ 
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.2);
+    }
+ 
+    .btn-ghost {
+      background: #f1f5f9;
+      color: #475569;
+    }
+ 
+    .btn-ghost:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+ 
+    /* Status feedback */
+    .status-msg {
+      font-size: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      margin-top: 0.5rem;
+    }
+ 
+    .status-msg.success { background: #f0fdf4; color: #16a34a; }
+    .status-msg.error   { background: #fef2f2; color: #dc2626; }
+ 
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+    }
+ 
+    /* Existing notifications list */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+ 
+    .notif-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.625rem;
+      padding: 0.75rem 0.875rem;
+    }
+ 
+    .notif-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+ 
+    .notif-card-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+ 
+    .notif-card-meta {
+      font-size: 0.6875rem;
+      color: #94a3b8;
+    }
+ 
+    .notif-card-badges {
+      display: flex;
+      gap: 0.375rem;
+      margin-top: 0.375rem;
+      flex-wrap: wrap;
+    }
+ 
+    .pill {
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.125rem 0.375rem;
+      border-radius: 9999px;
+    }
+ 
+    .pill-type-feature  { background: #eff6ff; color: #2563eb; }
+    .pill-type-info     { background: #f0f9ff; color: #0284c7; }
+    .pill-type-warning  { background: #fffbeb; color: #d97706; }
+    .pill-aud-all       { background: #f8fafc; color: #64748b; }
+    .pill-aud-lawyers   { background: #f0fdf4; color: #15803d; }
+    .pill-aud-editors   { background: #fdf4ff; color: #7e22ce; }
+    .pill-status-active   { background: #f0fdf4; color: #15803d; }
+    .pill-status-archived { background: #f8fafc;  color: #94a3b8; }
+ 
+    .notif-card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+ 
+    .icon-btn {
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+ 
+    .icon-btn.archive {
+      color: #64748b;
+    }
+    .icon-btn.archive:hover { background: #f1f5f9; border-color: #e2e8f0; }
+ 
+    .icon-btn.delete {
+      color: #dc2626;
+    }
+    .icon-btn.delete:hover { background: #fee2e2; border-color: #fca5a5; }
+ 
+    .icon-btn.restore {
+      color: #16a34a;
+    }
+    .icon-btn.restore:hover { background: #f0fdf4; border-color: #86efac; }
+ 
+    .empty-list {
+      text-align: center;
+      padding: 1.5rem;
+      color: #94a3b8;
+      font-size: 0.8125rem;
+    }
+ 
+    .char-count {
+      font-size: 0.6875rem;
+      color: #94a3b8;
+      text-align: right;
+      margin-top: 0.2rem;
+    }
+    .char-count.over { color: #dc2626; }

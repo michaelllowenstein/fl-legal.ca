@@ -1,0 +1,38 @@
+
+    <div
+      class="fixed top-5 right-5 z-[70] w-full max-w-xs animate-slide-down"
+      role="status"
+      aria-live="polite"
+      (click)="$event.stopPropagation()">
+ 
+      <!-- Panel -->
+      <div
+        class="relative overflow-hidden rounded-xl shadow-dialog text-white
+               flex items-start gap-3 px-4 py-3.5"
+        [class]="panelClass">
+ 
+        <!-- FLIcon -->
+        <app-fl-icon [name]="iconName" class="w-5 h-5 shrink-0 mt-0.5" />
+ 
+        <!-- Message -->
+        <p class="font-sans text-sm font-medium leading-snug flex-1 pt-0.5">
+          {{ data.message }}
+        </p>
+ 
+        <!-- Dismiss -->
+        <button
+          class="shrink-0 opacity-60 hover:opacity-100 transition-opacity -mr-1 -mt-0.5 p-1 rounded"
+          aria-label="Dismiss"
+          (click)="close()">
+          <app-fl-icon name="x-mark" class="w-4 h-4" />
+        </button>
+ 
+        <!-- Progress bar (shown when auto-dismiss is active) -->
+        @if (duration > 0) {
+          <div
+            class="absolute bottom-0 left-0 h-[3px] bg-white/40 origin-left"
+            [style.animation]="'shrink ' + duration + 'ms linear forwards'">
+          </div>
+        }
+      </div>
+    </div>

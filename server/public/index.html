@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fric, Lowenstein &amp; Co. LLP — API</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Georgia', serif;
+      background: #0f2235;
+      color: #f5f0e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      background: #1a3a5c;
+      border-radius: 16px;
+      padding: 3rem;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(0,0,0,.45);
+    }
+    .badge {
+      display: inline-block;
+      background: #b8932a;
+      color: #0f2235;
+      font-family: sans-serif;
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      padding: 3px 12px;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    h1 { color: #b8932a; font-size: 1.8rem; font-weight: 600; line-height: 1.2; }
+    .sub {
+      font-family: sans-serif;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.35);
+      margin: .35rem 0 2rem;
+    }
+    p {
+      font-size: .95rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,.65);
+      margin-bottom: 1rem;
+    }
+    code {
+      background: rgba(0,0,0,.35);
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: .88em;
+      font-family: monospace;
+    }
+    .links {
+      background: rgba(0,0,0,.25);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.75rem;
+    }
+    .links-label {
+      font-family: sans-serif;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.3);
+      margin-bottom: .75rem;
+    }
+    a {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      color: #b8932a;
+      text-decoration: none;
+      font-family: sans-serif;
+      font-size: .9rem;
+      padding: .3rem 0;
+      transition: color .15s;
+    }
+    a:hover { color: #d4ab40; text-decoration: underline; }
+    .status {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .pill {
+      font-family: sans-serif;
+      font-size: .72rem;
+      color: rgba(255,255,255,.45);
+      background: rgba(0,0,0,.2);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .pill.ok {
+      color: #10b981;
+      border-color: rgba(16,185,129,.2);
+    }
+    .footer {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-family: sans-serif;
+      font-size: .7rem;
+      color: rgba(255,255,255,.2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">API Server</span>
+    <h1>Fric, Lowenstein &amp; Co.</h1>
+    <p class="sub">Barristers &amp; Solicitors &mdash; REST API</p>
+
+    <p>
+      This server provides the backend API for
+      <a href="https://fl-legal.ca" style="display:inline;padding:0;font-family:inherit;font-size:inherit">fl-legal.ca</a>.
+      All endpoints are prefixed with <code>/api</code>.
+    </p>
+
+    <div class="links">
+      <div class="links-label">Quick links</div>
+      <a href="/api/health">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8932a" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Health check
+      </a>
+      <a href="/api/content">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8932a" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Site content
+      </a>
+      <a href="/api/blog">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8932a" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Blog posts
+      </a>
+      <a href="/api/profiles">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8932a" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Lawyer profiles
+      </a>
+      <a href="/api/calc-config/">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8932a" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+        Calculator config
+      </a>
+    </div>
+
+    <div class="status" id="status">
+      <span class="pill" id="health-pill">checking&hellip;</span>
+    </div>
+
+    <div class="footer">
+      &copy; 2026 Fric, Lowenstein &amp; Co. LLP. All rights reserved.
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/health')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var el = document.getElementById('health-pill');
+        if (d && d.ok) {
+          el.textContent = 'API online';
+          el.classList.add('ok');
+        } else {
+          el.textContent = 'API error';
+        }
+      })
+      .catch(function() {
+        document.getElementById('health-pill').textContent = 'API unreachable';
+      });
+  </script>
+</body>
+</html>

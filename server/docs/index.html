@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference — Fric, Lowenstein &amp; Co. LLP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & tokens ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #1a1a18;
+      --ink-mid:    #3d3d38;
+      --ink-faint:  #7a7a72;
+      --rule:       #e2e0d8;
+      --parchment:  #f8f6f0;
+      --cream:      #fffdf7;
+      --gold:       #b8960c;
+      --gold-light: #f0e8c0;
+      --gold-dark:  #8a6f00;
+      --red:        #c0392b;
+      --green:      #1a6b3c;
+      --blue:       #1a3f6b;
+      --purple:     #4a1a6b;
+      --amber:      #7a4800;
+
+      --mono: 'JetBrains Mono', monospace;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+
+      --sidebar-w: 260px;
+      --content-max: 820px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--cream);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--ink);
+      color: var(--parchment);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-brand .wordmark {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--gold-light);
+      letter-spacing: 0.01em;
+    }
+
+    .sidebar-brand .sub {
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .sidebar-brand .version-badge {
+      display: inline-block;
+      margin-top: 10px;
+      background: rgba(184,150,12,0.18);
+      border: 1px solid rgba(184,150,12,0.35);
+      color: var(--gold-light);
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar-section {
+      padding: 18px 24px 6px;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 8px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 400;
+      border-left: 2px solid transparent;
+      padding-left: 10px;
+      margin-left: -10px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      color: var(--gold-light);
+      border-left-color: var(--gold);
+    }
+
+    .sidebar-nav .method-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      padding: 2px 5px;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .badge-post   { background: rgba(192,57,43,0.25);  color: #f1948a; }
+    .badge-get    { background: rgba(26,107,60,0.25);  color: #82e0aa; }
+    .badge-put    { background: rgba(26,63,107,0.25);  color: #85c1e9; }
+    .badge-delete { background: rgba(74,26,107,0.25);  color: #c39bd3; }
+
+    /* ── Main content ────────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 48px 80px;
+      max-width: calc(var(--sidebar-w) + var(--content-max) + 96px);
+    }
+
+    /* ── Page header ─────────────────────────────────────────────────────── */
+    .page-header {
+      border-bottom: 1px solid var(--rule);
+      padding: 52px 0 36px;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0;
+      width: 60px; height: 2px;
+      background: var(--gold);
+    }
+
+    .page-header h1 {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .page-header h1 em {
+      font-style: italic;
+      color: var(--ink-mid);
+    }
+
+    .page-header .meta {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .page-header .meta span {
+      font-size: 13px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+    }
+
+    .page-header .meta .dot { color: var(--rule); }
+
+    /* ── Sections ────────────────────────────────────────────────────────── */
+    .section {
+      margin-bottom: 72px;
+      scroll-margin-top: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-header h2 {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+
+    .section-header .section-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Prose ───────────────────────────────────────────────────────────── */
+    .prose {
+      max-width: var(--content-max);
+      color: var(--ink-mid);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .prose p { margin-bottom: 12px; }
+    .prose strong { color: var(--ink); font-weight: 500; }
+
+    .prose a {
+      color: var(--gold-dark);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── Endpoint card ───────────────────────────────────────────────────── */
+    .endpoint {
+      background: var(--parchment);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      margin-bottom: 28px;
+      overflow: hidden;
+      scroll-margin-top: 32px;
+      max-width: var(--content-max);
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .endpoint-header:hover { background: var(--gold-light); }
+
+    .method {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+
+    .method-POST   { background: #fdf0ee; color: var(--red);    border: 1px solid #f5c6c0; }
+    .method-GET    { background: #eef6f1; color: var(--green);  border: 1px solid #b8dfc8; }
+    .method-PUT    { background: #eef2f9; color: var(--blue);   border: 1px solid #b8ccec; }
+    .method-DELETE { background: #f4eef9; color: var(--purple); border: 1px solid #d4b8ec; }
+
+    .endpoint-path {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--ink);
+      flex: 1;
+    }
+
+    .endpoint-path .path-base { color: var(--ink-faint); }
+
+    .endpoint-summary {
+      font-size: 13px;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+
+    .endpoint-chevron {
+      margin-left: auto;
+      color: var(--ink-faint);
+      font-size: 12px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .endpoint.open .endpoint-chevron { transform: rotate(180deg); }
+
+    .endpoint-body {
+      display: none;
+      padding: 22px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .endpoint.open .endpoint-body { display: block; }
+
+    /* ── Field tables ────────────────────────────────────────────────────── */
+    .field-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+
+    .field-label:first-child { margin-top: 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-bottom: 4px;
+    }
+
+    th {
+      text-align: left;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding: 6px 12px 6px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    td {
+      padding: 9px 12px 9px 0;
+      border-bottom: 1px solid rgba(226,224,216,0.5);
+      vertical-align: top;
+    }
+
+    td:last-child { padding-right: 0; }
+
+    tr:last-child td { border-bottom: none; }
+
+    .field-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .field-type {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-faint);
+    }
+
+    .required-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 5px;
+      background: rgba(192,57,43,0.1);
+      color: var(--red);
+      border-radius: 2px;
+      font-family: var(--mono);
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    .optional-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 5px;
+      background: rgba(0,0,0,0.05);
+      color: var(--ink-faint);
+      border-radius: 2px;
+      font-family: var(--mono);
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    /* ── Code blocks ─────────────────────────────────────────────────────── */
+    pre {
+      background: var(--ink);
+      color: #d4d0c4;
+      border-radius: 5px;
+      padding: 18px 20px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 14px 0;
+      position: relative;
+    }
+
+    pre .comment   { color: #6a8a6a; font-style: italic; }
+    pre .key       { color: #d4b896; }
+    pre .str       { color: #a8c878; }
+    pre .num       { color: #c8a8e8; }
+    pre .kw        { color: #78aad4; }
+    pre .url       { color: #d4a878; }
+
+    code {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      background: rgba(0,0,0,0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--ink);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 12px;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .copy-btn.copied { color: #82e0aa; border-color: rgba(130,224,170,0.4); }
+
+    /* ── Response status pills ───────────────────────────────────────────── */
+    .responses { display: flex; flex-direction: column; gap: 8px; }
+
+    .response-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .status-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      min-width: 52px;
+      text-align: center;
+    }
+
+    .status-2xx { background: #eef6f1; color: var(--green); border: 1px solid #b8dfc8; }
+    .status-4xx { background: #fdf0ee; color: var(--red);   border: 1px solid #f5c6c0; }
+    .status-5xx { background: #f9f4ee; color: var(--amber); border: 1px solid #e8d4b8; }
+
+    .response-desc {
+      font-size: 13.5px;
+      color: var(--ink-mid);
+      padding-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* ── Callout boxes ───────────────────────────────────────────────────── */
+    .callout {
+      border-left: 3px solid var(--gold);
+      background: var(--gold-light);
+      padding: 14px 18px;
+      border-radius: 0 4px 4px 0;
+      margin: 16px 0;
+      font-size: 13.5px;
+      color: var(--ink-mid);
+    }
+
+    .callout.info  { border-color: var(--blue);   background: #eef2f9; }
+    .callout.warn  { border-color: var(--amber);  background: #fdf6ee; }
+    .callout.error { border-color: var(--red);    background: #fdf0ee; }
+
+    .callout strong { color: var(--ink); }
+
+    /* ── Auth scheme cards ───────────────────────────────────────────────── */
+    .auth-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+      max-width: var(--content-max);
+    }
+
+    .auth-card {
+      background: var(--parchment);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 20px;
+    }
+
+    .auth-card h4 {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+    }
+
+    .auth-card .route-ref {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--gold-dark);
+      margin-top: 10px;
+    }
+
+    /* ── Rate limit table ────────────────────────────────────────────────── */
+    .rate-table {
+      max-width: var(--content-max);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 13.5px;
+    }
+
+    .rate-table table { margin: 0; }
+
+    .rate-table th {
+      background: var(--parchment);
+      padding: 10px 16px;
+    }
+
+    .rate-table td { padding: 10px 16px; }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    .page-footer {
+      max-width: var(--content-max);
+      border-top: 1px solid var(--rule);
+      padding-top: 28px;
+      margin-top: 48px;
+      color: var(--ink-faint);
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-footer a { color: var(--gold-dark); text-decoration: none; }
+
+    /* ── Utility ─────────────────────────────────────────────────────────── */
+    .mt-0 { margin-top: 0 !important; }
+    .divider { height: 1px; background: var(--rule); margin: 28px 0; max-width: var(--content-max); }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 0 24px 60px; }
+      .auth-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!--  SIDEBAR                                                                  -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="wordmark">Fric, Lowenstein<br>&amp; Co. LLP</div>
+    <div class="sub">API Reference</div>
+    <div class="version-badge">v1.0.0</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Overview</div>
+    <nav class="sidebar-nav">
+      <a href="#overview">Introduction</a>
+      <a href="#auth-overview">Authentication</a>
+      <a href="#rate-limiting">Rate Limiting</a>
+      <a href="#errors">Error Format</a>
+    </nav>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Auth</div>
+    <nav class="sidebar-nav">
+      <a href="#ep-auth-editor">
+        <span class="method-badge badge-post">POST</span>
+        /api/auth/editor
+      </a>
+      <a href="#ep-auth-lawyer">
+        <span class="method-badge badge-post">POST</span>
+        /api/auth/lawyer
+      </a>
+      <a href="#ep-auth-lawyer-pw">
+        <span class="method-badge badge-post">POST</span>
+        /api/auth/lawyer/password
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Content (CMS)</div>
+    <nav class="sidebar-nav">
+      <a href="#ep-content-get">
+        <span class="method-badge badge-get">GET</span>
+        /api/content/:key
+      </a>
+      <a href="#ep-content-put">
+        <span class="method-badge badge-put">PUT</span>
+        /api/content/:key
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Calendar</div>
+    <nav class="sidebar-nav">
+      <a href="#ep-calendar-list">
+        <span class="method-badge badge-get">GET</span>
+        /api/calendar
+      </a>
+      <a href="#ep-calendar-event">
+        <span class="method-badge badge-get">GET</span>
+        /api/calendar/:id
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Inquiries</div>
+    <nav class="sidebar-nav">
+      <a href="#ep-inquiry-post">
+        <span class="method-badge badge-post">POST</span>
+        /api/inquiries
+      </a>
+      <a href="#ep-inquiry-priority">
+        <span class="method-badge badge-post">POST</span>
+        /api/inquiries/priority
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <nav class="sidebar-nav">
+      <a href="#ep-health">
+        <span class="method-badge badge-get">GET</span>
+        /api/health
+      </a>
+    </nav>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!--  MAIN CONTENT                                                             -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Page header -->
+  <header class="page-header">
+    <h1>API <em>Reference</em></h1>
+    <div class="meta">
+      <span>fl-legal-v3</span>
+      <span class="dot">·</span>
+      <span>Fastify / Node.js</span>
+      <span class="dot">·</span>
+      <span>Firebase RTDB</span>
+      <span class="dot">·</span>
+      <span>v1.0.0</span>
+    </div>
+  </header>
+
+  <!-- ── Overview ──────────────────────────────────────────────────────────── -->
+  <section class="section" id="overview">
+    <div class="section-header">
+      <h2>Introduction</h2>
+      <span class="section-tag">Overview</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        This document describes the REST API powering the <strong>fl-legal-v3</strong> platform —
+        the public website and internal management tool for Fric, Lowenstein &amp; Co. LLP.
+        The API is a <strong>Fastify</strong> application deployed as a Vercel serverless function,
+        backed by <strong>Firebase Realtime Database</strong>.
+      </p>
+      <p>
+        All endpoints are served from the same origin as the Angular client. In production,
+        <code>apiURL</code> is the empty string <code>''</code> (same-origin); all route strings
+        include the <code>/api</code> segment explicitly.
+      </p>
+    </div>
+
+    <div class="callout info">
+      <strong>Base URL (production):</strong> <code>https://fl-legal.ca</code><br />
+      <strong>Base URL (local dev):</strong> <code>https://localhost:8228</code>
+    </div>
+
+    <div class="field-label mt-0" style="margin-top:20px">Example request</div>
+    <pre><button class="copy-btn" onclick="copyPre(this)">copy</button><span class="kw">curl</span> -X POST <span class="str">https://fl-legal.ca/api/auth/editor</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"password":"your-editor-password"}'</span></pre>
+  </section>
+
+  <!-- ── Auth overview ─────────────────────────────────────────────────────── -->
+  <section class="section" id="auth-overview">
+    <div class="section-header">
+      <h2>Authentication</h2>
+      <span class="section-tag">Security</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        Two independent JWT bearer schemes are in use. Tokens are issued by the auth routes
+        and must be sent on all protected requests as an <code>Authorization: Bearer &lt;token&gt;</code> header.
+      </p>
+    </div>
+
+    <div class="auth-cards">
+      <div class="auth-card">
+        <h4>Editor JWT</h4>
+        <p>
+          Issued to the firm secretary via password authentication.
+          Grants write access to all CMS content routes. Default expiry: <strong>4 hours</strong>.
+        </p>
+        <code class="route-ref">POST /api/auth/editor</code>
+      </div>
+      <div class="auth-card">
+        <h4>Lawyer JWT</h4>
+        <p>
+          Issued to lawyers via Firebase ID token exchange or username/password.
+          Grants access to calendar routes. Default expiry: <strong>8 hours</strong>.
+        </p>
+        <code class="route-ref">POST /api/auth/lawyer<br />POST /api/auth/lawyer/password</code>
+      </div>
+    </div>
+
+    <div class="field-label">Using a token</div>
+    <pre><button class="copy-btn" onclick="copyPre(this)">copy</button><span class="comment"># All protected routes require this header</span>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+
+    <div class="callout warn">
+      <strong>Token storage (Angular client):</strong> Editor tokens are stored in
+      <code>sessionStorage</code> under the key <code>fl_editor_token</code>.
+      Lawyer tokens are stored in <code>sessionStorage</code> under <code>fl_lawyer_token</code>.
+      Neither is persisted to <code>localStorage</code>.
+    </div>
+  </section>
+
+  <!-- ── Rate limiting ─────────────────────────────────────────────────────── -->
+  <section class="section" id="rate-limiting">
+    <div class="section-header">
+      <h2>Rate Limiting</h2>
+      <span class="section-tag">Security</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        Auth endpoints are rate-limited per IP. Exceeding the limit returns
+        <code>429 Too Many Requests</code>. Content and calendar routes
+        inherit the Fastify global rate limiter defaults.
+      </p>
+    </div>
+
+    <div class="rate-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Limit</th>
+            <th>Window</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>POST /api/auth/editor</code></td>
+            <td>10 requests</td>
+            <td>15 minutes</td>
+          </tr>
+          <tr>
+            <td><code>POST /api/auth/lawyer</code></td>
+            <td>20 requests</td>
+            <td>5 minutes</td>
+          </tr>
+          <tr>
+            <td><code>POST /api/auth/lawyer/password</code></td>
+            <td>10 requests</td>
+            <td>15 minutes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Errors ─────────────────────────────────────────────────────────────── -->
+  <section class="section" id="errors">
+    <div class="section-header">
+      <h2>Error Format</h2>
+      <span class="section-tag">Conventions</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        All error responses return a JSON object with a single <code>error</code> string.
+        Error messages are intentionally vague on auth routes to avoid credential enumeration.
+      </p>
+    </div>
+
+    <pre><button class="copy-btn" onclick="copyPre(this)">copy</button><span class="comment">// 401 Unauthorized</span>
+{
+  <span class="key">"error"</span>: <span class="str">"Invalid credentials."</span>
+}
+
+<span class="comment">// 403 Forbidden</span>
+{
+  <span class="key">"error"</span>: <span class="str">"Editor access required."</span>
+}
+
+<span class="comment">// 429 Too Many Requests</span>
+{
+  <span class="key">"error"</span>: <span class="str">"Rate limit exceeded, retry in 15 minutes."</span>
+}</pre>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  AUTH ROUTES                                                            -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="auth">
+    <div class="section-header">
+      <h2>Auth</h2>
+      <span class="section-tag">Token issuance</span>
+    </div>
+
+    <!-- POST /api/auth/editor -->
+    <div class="endpoint" id="ep-auth-editor">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-POST">POST</span>
+        <span class="endpoint-path"><span class="path-base">/api/auth</span>/editor</span>
+        <span class="endpoint-summary">Secretary login</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="prose">
+          <p>
+            Validates the submitted password against the bcrypt hash stored in the
+            <code>EDITOR_HASH</code> environment variable. Returns a signed JWT on success.
+            The response token should be saved to <code>sessionStorage</code> and sent as
+            <code>Authorization: Bearer</code> on all subsequent CMS write requests.
+          </p>
+        </div>
+
+        <div class="callout">
+          <strong>Public route</strong> — no Authorization header required.
+          Rate-limited to 10 attempts / 15 min / IP.
+        </div>
+
+        <div class="field-label">Request body</div>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">password</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>1–256 chars</td>
+              <td>The shared editor password</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Example request</div>
+        <pre><button class="copy-btn" onclick="copyPre(this)">copy</button><span class="kw">POST</span> <span class="url">/api/auth/editor</span>
+Content-Type: application/json
+
+{
+  <span class="key">"password"</span>: <span class="str">"your-editor-password"</span>
+}</pre>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc">
+              <code>{ "token": "eyJ..." }</code> — JWT valid for 4 hours by default
+              (<code>EDITOR_TOKEN_EXPIRY</code> env var).
+            </div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">401</span>
+            <div class="response-desc">
+              <code>{ "error": "Invalid credentials." }</code>
+            </div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">429</span>
+            <div class="response-desc">Rate limit exceeded.</div>
+          </div>
+        </div>
+
+        <div class="field-label">Changing the password</div>
+        <div class="prose">
+          <p>
+            Use <code>auth-cli.sh</code> option <strong>7 — Generate bcrypt hash</strong>,
+            then update <code>EDITOR_HASH</code> in both <code>server/.env</code> and the
+            Vercel environment variable dashboard. No redeploy is required for Vercel env var
+            changes if the function is reinvoked (cold start picks up the new value).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST /api/auth/lawyer -->
+    <div class="endpoint" id="ep-auth-lawyer">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-POST">POST</span>
+        <span class="endpoint-path"><span class="path-base">/api/auth</span>/lawyer</span>
+        <span class="endpoint-summary">Firebase ID token exchange</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="prose">
+          <p>
+            Accepts a Firebase ID token obtained client-side via the Firebase Auth SDK
+            and exchanges it for an API JWT. This decouples downstream calendar routes
+            from Firebase Admin SDK validation — all subsequent requests use only the
+            issued API JWT.
+          </p>
+        </div>
+
+        <div class="callout">
+          <strong>Public route</strong> — no Authorization header required.
+          Rate-limited to 20 attempts / 5 min / IP.
+        </div>
+
+        <div class="field-label">Request body</div>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">idToken</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>minLength: 1</td>
+              <td>Firebase ID token from the client-side Auth SDK</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc">
+              <code>{ "token": "eyJ..." }</code> — JWT valid for 8 hours by default
+              (<code>LAWYER_TOKEN_EXPIRY</code> env var).
+            </div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">401</span>
+            <div class="response-desc">
+              <code>{ "error": "Invalid or expired Firebase token." }</code>
+            </div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">429</span>
+            <div class="response-desc">Rate limit exceeded.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST /api/auth/lawyer/password -->
+    <div class="endpoint" id="ep-auth-lawyer-pw">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-POST">POST</span>
+        <span class="endpoint-path"><span class="path-base">/api/auth</span>/lawyer/password</span>
+        <span class="endpoint-summary">Username + password login</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="prose">
+          <p>
+            Alternative lawyer login. Reads <code>/lawyers/{username}</code> from Firebase RTDB,
+            compares the submitted password against the stored bcrypt hash, and returns the same
+            API JWT as the Firebase ID token exchange route.
+            Lawyer records are seeded from <code>firebase-calendar-seed.json</code>.
+          </p>
+        </div>
+
+        <div class="callout">
+          <strong>Public route</strong> — no Authorization header required.
+          Rate-limited to 10 attempts / 15 min / IP.
+        </div>
+
+        <div class="field-label">Request body</div>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">username</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>minLength: 1</td>
+              <td>Lawyer's username key in RTDB, e.g. <code>bill.fric</code></td>
+            </tr>
+            <tr>
+              <td><span class="field-name">password</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>minLength: 1</td>
+              <td>Lawyer's plain-text password (compared against <code>passwordHash</code>)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Known lawyer usernames</div>
+        <pre><span class="comment">// Firebase RTDB path: /lawyers/{username}</span>
+bill.fric        <span class="comment">// William H. Fric — Partner</span>
+howard.lowenstein <span class="comment">// Howard M. Lowenstein — Partner</span>
+anthony.dilello  <span class="comment">// Anthony J. Di Lello — Associate</span>
+tami.fric        <span class="comment">// Tami Fric — Associate</span>
+york.campbell    <span class="comment">// York Campbell — Associate</span>
+marc.lowenstein  <span class="comment">// Marc A. Lowenstein — Associate</span></pre>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc"><code>{ "token": "eyJ..." }</code></div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">401</span>
+            <div class="response-desc"><code>{ "error": "Invalid credentials." }</code></div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">429</span>
+            <div class="response-desc">Rate limit exceeded.</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">500</span>
+            <div class="response-desc"><code>{ "error": "Login failed. Please try again." }</code> — Firebase read error.</div>
+          </div>
+        </div>
+
+        <div class="field-label">Changing a lawyer password</div>
+        <div class="prose">
+          <p>
+            Use <code>auth-cli.sh</code> option <strong>7 — Generate bcrypt hash</strong>,
+            then write the resulting hash to <code>/lawyers/{username}/passwordHash</code>
+            in Firebase RTDB directly via the Firebase console or a seeding script.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  CONTENT ROUTES                                                         -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="content">
+    <div class="section-header">
+      <h2>Content</h2>
+      <span class="section-tag">CMS — editor-protected writes</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        Site content is stored in Firebase RTDB under <code>public/siteContent/{key}</code>.
+        Read operations are public; write operations require a valid <strong>Editor JWT</strong>.
+        All writes go directly to RTDB via <code>SiteService</code>, bypassing the HTTP layer
+        on the Angular side — these API routes are the server-side counterpart.
+      </p>
+      <p>
+        Known content keys: <code>home</code>, <code>aboutUs</code>, <code>areasOfLaw</code>,
+        <code>faq</code>, <code>pricing</code>.
+      </p>
+    </div>
+
+    <!-- GET /api/content/:key -->
+    <div class="endpoint" id="ep-content-get">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-GET">GET</span>
+        <span class="endpoint-path"><span class="path-base">/api/content</span>/:key</span>
+        <span class="endpoint-summary">Read a content node</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout info"><strong>Public route</strong> — no Authorization header required.</div>
+
+        <div class="field-label">Path parameters</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">key</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Content node key — e.g. <code>home</code>, <code>aboutUs</code>, <code>pricing</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc">The content object for the requested key.</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">404</span>
+            <div class="response-desc"><code>{ "error": "Content not found." }</code></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUT /api/content/:key -->
+    <div class="endpoint" id="ep-content-put">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-PUT">PUT</span>
+        <span class="endpoint-path"><span class="path-base">/api/content</span>/:key</span>
+        <span class="endpoint-summary">Update a content node</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout error">
+          <strong>Editor JWT required</strong> — <code>Authorization: Bearer &lt;editor-token&gt;</code>
+        </div>
+
+        <div class="field-label">Path parameters</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">key</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Content node to update</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Request body</div>
+        <div class="prose"><p>Partial or full content object. Merged shallowly into the existing node via <code>dbUpdate()</code>.</p></div>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc"><code>{ "ok": true }</code></div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">401</span>
+            <div class="response-desc">Missing or invalid editor token.</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">403</span>
+            <div class="response-desc">Token present but not an editor role.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  CALENDAR ROUTES                                                        -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="calendar">
+    <div class="section-header">
+      <h2>Calendar</h2>
+      <span class="section-tag">Lawyer-protected</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        Calendar events are stored in Firebase RTDB under <code>public/calendar</code>.
+        All calendar routes require a valid <strong>Lawyer JWT</strong>.
+        Event type colours and status types are driven by <code>public/calendarMeta</code>.
+      </p>
+    </div>
+
+    <!-- GET /api/calendar -->
+    <div class="endpoint" id="ep-calendar-list">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-GET">GET</span>
+        <span class="endpoint-path"><span class="path-base">/api</span>/calendar</span>
+        <span class="endpoint-summary">List all events</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout error">
+          <strong>Lawyer JWT required</strong> — <code>Authorization: Bearer &lt;lawyer-token&gt;</code>
+        </div>
+
+        <div class="field-label">Query parameters</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">lawyerId</span><span class="optional-badge">optional</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Filter events by lawyer UID, e.g. <code>lawyer-bill-001</code></td>
+            </tr>
+            <tr>
+              <td><span class="field-name">date</span><span class="optional-badge">optional</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>ISO date string — filter to a specific day, e.g. <code>2026-04-14</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Response — event shape</div>
+        <pre><button class="copy-btn" onclick="copyPre(this)">copy</button>{
+  <span class="key">"id"</span>:          <span class="str">"event-001"</span>,
+  <span class="key">"title"</span>:       <span class="str">"Client Consultation — Smith Real Estate Purchase"</span>,
+  <span class="key">"date"</span>:        <span class="str">"2026-04-07"</span>,       <span class="comment">// YYYY-MM-DD</span>
+  <span class="key">"time"</span>:        <span class="str">"09:00"</span>,            <span class="comment">// HH:mm (Calgary local time)</span>
+  <span class="key">"duration"</span>:    <span class="num">60</span>,                 <span class="comment">// minutes</span>
+  <span class="key">"type"</span>:        <span class="str">"consultation"</span>,     <span class="comment">// see calendarMeta.eventTypes</span>
+  <span class="key">"lawyerId"</span>:    <span class="str">"lawyer-bill-001"</span>,
+  <span class="key">"lawyerName"</span>:  <span class="str">"William H. Fric"</span>,
+  <span class="key">"clientName"</span>:  <span class="str">"Robert Smith"</span>,
+  <span class="key">"description"</span>: <span class="str">"..."</span>,
+  <span class="key">"location"</span>:    <span class="str">"Office — Suite 750"</span>,
+  <span class="key">"status"</span>:      <span class="str">"confirmed"</span>,        <span class="comment">// confirmed | pending | cancelled</span>
+  <span class="key">"createdAt"</span>:   <span class="str">"2026-03-20T14:22:00.000Z"</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- GET /api/calendar/:id -->
+    <div class="endpoint" id="ep-calendar-event">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-GET">GET</span>
+        <span class="endpoint-path"><span class="path-base">/api</span>/calendar/:id</span>
+        <span class="endpoint-summary">Get a single event</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout error">
+          <strong>Lawyer JWT required</strong> — <code>Authorization: Bearer &lt;lawyer-token&gt;</code>
+        </div>
+
+        <div class="field-label">Path parameters</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">id</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Event ID, e.g. <code>event-001</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc">Single event object (same shape as list above).</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">404</span>
+            <div class="response-desc"><code>{ "error": "Event not found." }</code></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  INQUIRY ROUTES                                                         -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="inquiries">
+    <div class="section-header">
+      <h2>Inquiries</h2>
+      <span class="section-tag">Public — client submissions</span>
+    </div>
+
+    <div class="prose">
+      <p>
+        Client inquiry submissions from the public website. Standard inquiries are POSTed
+        to <code>/api/inquiries</code>; priority matters (flagged in the dialog) are POSTed
+        to <code>/api/inquiries/priority</code>. Both routes trigger a notification email
+        to the firm via SMTP/SendGrid.
+      </p>
+    </div>
+
+    <!-- POST /api/inquiries -->
+    <div class="endpoint" id="ep-inquiry-post">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-POST">POST</span>
+        <span class="endpoint-path"><span class="path-base">/api</span>/inquiries</span>
+        <span class="endpoint-summary">Submit a client inquiry</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout info"><strong>Public route</strong> — no Authorization header required.</div>
+
+        <div class="field-label">Request body</div>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">name</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Client full name</td>
+            </tr>
+            <tr>
+              <td><span class="field-name">email</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Client email address</td>
+            </tr>
+            <tr>
+              <td><span class="field-name">phone</span><span class="optional-badge">optional</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Client phone number</td>
+            </tr>
+            <tr>
+              <td><span class="field-name">practiceArea</span><span class="optional-badge">optional</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Practice area of interest — e.g. <code>real_estate</code>, <code>wills_estates</code></td>
+            </tr>
+            <tr>
+              <td><span class="field-name">message</span><span class="required-badge">required</span></td>
+              <td><span class="field-type">string</span></td>
+              <td>Inquiry message body</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc"><code>{ "ok": true }</code> — inquiry received and email dispatched.</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">400</span>
+            <div class="response-desc">Validation error — missing required fields.</div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">500</span>
+            <div class="response-desc">SMTP dispatch failure.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST /api/inquiries/priority -->
+    <div class="endpoint" id="ep-inquiry-priority">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-POST">POST</span>
+        <span class="endpoint-path"><span class="path-base">/api</span>/inquiries/priority</span>
+        <span class="endpoint-summary">Submit a priority inquiry</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout info"><strong>Public route</strong> — no Authorization header required.</div>
+        <div class="prose">
+          <p>
+            Identical body shape to <code>POST /api/inquiries</code>. Priority inquiries
+            are flagged in the notification email subject line and may be routed differently
+            by the firm's intake process.
+          </p>
+        </div>
+
+        <div class="field-label">Responses</div>
+        <div class="responses">
+          <div class="response-row">
+            <span class="status-code status-2xx">200</span>
+            <div class="response-desc"><code>{ "ok": true }</code></div>
+          </div>
+          <div class="response-row">
+            <span class="status-code status-4xx">400</span>
+            <div class="response-desc">Validation error.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  SYSTEM                                                                 -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="system">
+    <div class="section-header">
+      <h2>System</h2>
+      <span class="section-tag">Health &amp; diagnostics</span>
+    </div>
+
+    <div class="endpoint" id="ep-health">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method method-GET">GET</span>
+        <span class="endpoint-path"><span class="path-base">/api</span>/health</span>
+        <span class="endpoint-summary">Health check</span>
+        <span class="endpoint-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout info"><strong>Public route.</strong> Used by <code>auth-cli.sh health</code> and uptime monitors.</div>
+
+        <div class="field-label">Response</div>
+        <pre><button class="copy-btn" onclick="copyPre(this)">copy</button>{
+  <span class="key">"status"</span>: <span class="str">"ok"</span>,
+  <span class="key">"env"</span>:    <span class="str">"production"</span>,
+  <span class="key">"ts"</span>:     <span class="str">"2026-04-29T15:00:00.000Z"</span>
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <span>Fric, Lowenstein &amp; Co. LLP &mdash; Internal API Documentation</span>
+    <span>fl-legal-v3 &mdash; v1.0.0</span>
+  </footer>
+
+</main>
+
+<script>
+  // ── Endpoint accordion ───────────────────────────────────────────────────
+  function toggleEndpoint(headerEl) {
+    headerEl.closest('.endpoint').classList.toggle('open');
+  }
+
+  // Open the endpoint whose id matches the URL hash on load
+  function openFromHash() {
+    const hash = location.hash.slice(1);
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (el && el.classList.contains('endpoint')) el.classList.add('open');
+  }
+
+  window.addEventListener('DOMContentLoaded', openFromHash);
+  window.addEventListener('hashchange', openFromHash);
+
+  // ── Copy button ──────────────────────────────────────────────────────────
+  function copyPre(btn) {
+    const pre = btn.closest('pre');
+    const text = pre.innerText.replace(/^copy\n?/, '');
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      btn.textContent = 'copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // ── Active sidebar link on scroll ────────────────────────────────────────
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

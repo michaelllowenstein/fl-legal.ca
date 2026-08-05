@@ -1,0 +1,64 @@
+
+    <div class="panel" role="dialog" aria-label="Notifications">
+      <!-- Header -->
+      <div class="panel-header">
+        <span class="panel-title">
+          Notifications
+          @if (notifSvc.unreadCount() > 0) {
+            ({{ notifSvc.unreadCount() }} unread)
+          }
+        </span>
+        <button
+          class="mark-all-btn"
+          [disabled]="notifSvc.unreadCount() === 0"
+          (click)="markAllRead()"
+        >
+          Mark all read
+        </button>
+      </div>
+ 
+      <!-- Body -->
+      <div class="panel-body">
+        @if (notifSvc.notifications().length === 0) {
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118
+                   9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64
+                   3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714
+                   0a3 3 0 11-5.714 0"/>
+            </svg>
+            <p>No notifications yet.</p>
+          </div>
+        } @else {
+          <!-- Unread section -->
+          @if (unread().length > 0) {
+            <p class="section-label">New</p>
+            @for (notif of unread(); track notif.id) {
+              <app-notification-item
+                [notification]="notif"
+                (read)="notifSvc.markRead($event)"
+                (dismissed)="notifSvc.dismiss($event)"
+              />
+            }
+          }
+ 
+          <!-- Read section -->
+          @if (read().length > 0) {
+            <p class="section-label">Earlier</p>
+            @for (notif of read(); track notif.id) {
+              <app-notification-item
+                [notification]="notif"
+                (read)="notifSvc.markRead($event)"
+                (dismissed)="notifSvc.dismiss($event)"
+              />
+            }
+          }
+        }
+      </div>
+ 
+      <!-- Footer -->
+      <div class="panel-footer">
+        <button class="close-btn" (click)="close.emit()">Close</button>
+      </div>
+    </div>

@@ -1,0 +1,51 @@
+
+    <div
+      class="bg-white rounded-2xl shadow-dialog w-full max-w-sm p-7 animate-scale-in"
+      role="alertdialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'confirm-title'"
+      [attr.aria-describedby]="'confirm-body'"
+      (click)="$event.stopPropagation()">
+
+      <!-- FLIcon + Title -->
+      <div class="flex items-start gap-4 mb-4">
+        <div
+          class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center mt-0.5"
+          [class]="data.danger ? 'bg-red-100' : 'bg-brand/10'">
+          <app-fl-icon
+            [name]="data.danger ? 'x-mark' : 'document-text'"
+            class="w-5 h-5"
+            [class]="data.danger ? 'text-red-600' : 'text-brand'" />
+        </div>
+        <div>
+          <h2
+            id="confirm-title"
+            class="font-display text-brand text-lg font-semibold leading-snug">
+            {{ data.title ?? 'Confirm' }}
+          </h2>
+          <p
+            id="confirm-body"
+            class="font-sans text-gray-500 text-sm leading-relaxed mt-1">
+            {{ data.message }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3 mt-6">
+        <button
+          class="flex-1 font-sans text-sm text-gray-500 border border-gray-200
+                 rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
+          (click)="close(false)">
+          {{ data.cancelLabel ?? 'Cancel' }}
+        </button>
+        <button
+          class="flex-1 font-sans text-sm font-medium rounded-lg py-2.5 transition-colors"
+          [class]="data.danger
+            ? 'bg-red-600 hover:bg-red-700 text-white'
+            : 'bg-brand hover:bg-brand-light text-white'"
+          (click)="close(true)">
+          {{ data.confirmLabel ?? 'Confirm' }}
+        </button>
+      </div>
+    </div>

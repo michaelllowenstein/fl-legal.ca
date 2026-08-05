@@ -1,0 +1,179 @@
+<!-- Header -->
+<div class="bg-brand-dark py-6 px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div>
+      <h1 class="font-display text-white text-2xl font-semibold">Firm Calendar</h1>
+      <p class="font-sans text-white/50 text-xs mt-0.5">Private — Lawyer Access Only</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button
+        (click)="showForm.set(!showForm())"
+        class="inline-flex items-center gap-2 font-sans text-sm bg-brand-gold hover:bg-yellow-500 text-brand-dark font-semibold px-4 py-2 rounded-lg transition-colors">
+        <app-fl-icon name="calendar" class="w-4 h-4" />
+        Add Event
+      </button>
+      <button
+        (click)="logout()"
+        class="font-sans text-sm text-white/60 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">
+        Sign Out
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+
+  <!-- Add event form -->
+  @if (showForm()) {
+    <div class="bg-white rounded-2xl shadow-card p-6 animate-fade-in">
+      <h2 class="font-display text-brand text-xl font-semibold mb-5">New Event</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="fl-cal-label">Title *</label>
+          <input type="text" [value]="formTitle()" (input)="formTitle.set($any($event.target).value)"
+            placeholder="Event title" class="fl-cal-input" />
+        </div>
+        <div>
+          <label class="fl-cal-label">Date *</label>
+          <input type="date" [value]="formDate()" (input)="formDate.set($any($event.target).value)"
+            class="fl-cal-input" />
+        </div>
+        <div>
+          <label class="fl-cal-label">Time</label>
+          <input type="time" [value]="formTime()" (input)="formTime.set($any($event.target).value)"
+            class="fl-cal-input" />
+        </div>
+        <div>
+          <label class="fl-cal-label">Description</label>
+          <input type="text" [value]="formDesc()" (input)="formDesc.set($any($event.target).value)"
+            placeholder="Optional notes" class="fl-cal-input" />
+        </div>
+      </div>
+      @if (formError()) {
+        <p class="font-sans text-xs text-red-500 mt-2 animate-fade-in">{{ formError() }}</p>
+      }
+      <div class="flex gap-3 mt-5">
+        <button
+          class="font-sans text-sm text-gray-500 border border-gray-200 rounded-lg px-5 py-2.5 hover:bg-gray-50 transition-colors"
+          (click)="showForm.set(false)">
+          Cancel
+        </button>
+        <button
+          class="font-sans text-sm bg-brand hover:bg-brand-light text-white font-medium rounded-lg px-5 py-2.5 transition-colors disabled:opacity-50 flex items-center gap-2"
+          [disabled]="formSaving()"
+          (click)="saveEvent()">
+          @if (formSaving()) {
+            <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          } @else {
+            Save Event
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Month navigation -->
+  <div class="flex items-center justify-between">
+    <button
+      (click)="prevMonth()"
+      class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-brand/10 transition-colors">
+      <app-fl-icon name="chevron-left" class="w-5 h-5 text-brand" />
+    </button>
+
+    <h2 class="font-display text-brand text-2xl font-semibold">
+      {{ monthNames[currentMonth()] }} {{ currentYear() }}
+    </h2>
+
+    <button
+      (click)="nextMonth()"
+      class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-brand/10 transition-colors">
+      <app-fl-icon name="chevron-right" class="w-5 h-5 text-brand" />
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-spinner />
+  } @else {
+    <!-- Calendar grid -->
+    <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+
+      <!-- Day headers -->
+      <div class="grid grid-cols-7 bg-brand">
+        @for (day of dayNames; track day) {
+          <div class="py-3 text-center font-sans text-white/70 text-xs font-semibold uppercase tracking-wide">
+            {{ day }}
+          </div>
+        }
+      </div>
+
+      <!-- Day cells -->
+      <div class="grid grid-cols-7 divide-x divide-y divide-gray-100">
+        @for (cell of calendarDays(); track cell.dateStr) {
+          <div
+            class="min-h-[100px] p-2 relative"
+            [class.bg-gray-50]="!cell.inMonth"
+            [class.bg-brand-gold/5]="isToday(cell.dateStr)">
+
+            <!-- Date number -->
+            <div
+              class="w-7 h-7 flex items-center justify-center rounded-full text-sm font-sans mb-1 font-medium"
+              [class.bg-brand-gold]="isToday(cell.dateStr)"
+              [class.text-white]="isToday(cell.dateStr)"
+              [class.text-brand]="cell.inMonth && !isToday(cell.dateStr)"
+              [class.text-gray-300]="!cell.inMonth">
+              {{ cell.date.getDate() }}
+            </div>
+
+            <!-- Events for this day -->
+            <div class="space-y-1">
+              @for (event of eventsForDay(cell.dateStr); track event.id) {
+                <div
+                  class="group relative flex items-start gap-1 bg-brand/10 hover:bg-brand/20 rounded px-1.5 py-1 cursor-default transition-colors">
+                  <span class="font-sans text-[11px] text-brand font-medium leading-tight line-clamp-2 flex-1">
+                    @if (event.time) { <span class="text-brand-gold">{{ event.time }}</span> · }{{ event.title }}
+                  </span>
+                  <button
+                    (click)="deleteEvent(event)"
+                    class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 mt-0.5">
+                    <app-fl-icon name="x-mark" class="w-3 h-3" />
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Upcoming events list -->
+    <div class="bg-white rounded-2xl shadow-card p-6">
+      <h3 class="font-display text-brand text-xl font-semibold mb-4">Upcoming Events</h3>
+      @if (events().length === 0) {
+        <p class="font-sans text-gray-400 text-sm">No events scheduled.</p>
+      } @else {
+        <div class="space-y-3">
+          @for (event of events(); track event.id) {
+            <div class="flex items-start gap-4 py-3 border-b border-gray-100 last:border-0">
+              <div class="shrink-0 text-center bg-brand-cream rounded-xl px-3 py-2 min-w-[52px]">
+                <span class="font-display text-brand text-lg font-semibold leading-none block">
+                  {{ event.date | slice:8:10 }}
+                </span>
+                <span class="font-sans text-brand-gold text-[10px] uppercase font-semibold">
+                  {{ monthNames[(+event.date.slice(5,7)) - 1]?.slice(0,3) }}
+                </span>
+              </div>
+              <div class="flex-1">
+                <p class="font-sans text-brand text-sm font-medium">{{ event.title }}</p>
+                @if (event.time) { <p class="font-sans text-gray-400 text-xs mt-0.5">{{ event.time }}</p> }
+                @if (event.description) { <p class="font-sans text-gray-500 text-xs mt-1">{{ event.description }}</p> }
+              </div>
+              <button (click)="deleteEvent(event)" class="text-gray-300 hover:text-red-400 transition-colors p-1">
+                <app-fl-icon name="x-mark" class="w-4 h-4" />
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

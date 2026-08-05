@@ -1,0 +1,14 @@
+{
+  "name": "ngo",
+  "version": "1.0.0",
+  "description": "Angular standalone component/service/guard/pipe generator for fl-legal-v3",
+  "type": "module",
+  "bin": {
+    "ngo": "./gen.mjs"
+  },
+  "scripts": {
+    "test": "node gen.mjs --dry spinner && node gen.mjs --dry pages/about-us && node gen.mjs --dry --service site-content && node gen.mjs --dry --guard lawyer-auth && node gen.mjs --dry --pipe safe-html"
+  },
+  "keywords": ["angular", "generator", "scaffold"],
+  "license": "MIT"
+}

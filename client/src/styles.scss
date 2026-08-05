@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=PT+Serif:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f1419;
+    --card: #f7f8f8;
+    --card-foreground: #0f1419;
+    --popover: #ffffff;
+    --popover-foreground: #0f1419;
+    --primary: #607685;
+    --primary-foreground: #ffffff;
+    --secondary: #ccdef0;
+    --secondary-foreground: #0f191f;
+    --muted: #e5e5e6;
+    --muted-foreground: #0f1419;
+    --accent: #d4d7bc;
+    --accent-foreground: #274b62;
+    --destructive: #f4212e;
+    --destructive-foreground: #ffffff;
+    --border: #e1eaef;
+    --input: #f7f9fa;
+    --ring: #1da1f2;
+    --chart-1: #1e9df1;
+    --chart-2: #00b87a;
+    --chart-3: #f7b928;
+    --chart-4: #17bf63;
+    --chart-5: #e0245e;
+    --sidebar: #f7f8f8;
+    --sidebar-foreground: #0f1419;
+    --sidebar-primary: #1e9df1;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e3ecf6;
+    --sidebar-accent-foreground: #1e9df1;
+    --sidebar-border: #e1e8ed;
+    --sidebar-ring: #1da1f2;
+    --font-sans: Poppins, ui-sans-serif, sans-serif, system-ui;
+    --font-serif: Aleo, ui-serif, serif;
+    --font-mono: Fira Code, ui-monospace, monospace;
+    --radius: 1.3rem;
+    --shadow-x: 0px;
+    --shadow-y: 2px;
+    --shadow-blur: 0px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0;
+    --shadow-color: rgba(29,161,242,0.15);
+    --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --tracking-normal: 0.1em;
+    --spacing: 0.25rem;
+  }
+
+  .dark {
+    --background: #000000;
+    --foreground: #e7e9ea;
+    --card: #17181c;
+    --card-foreground: #d9d9d9;
+    --popover: #000000;
+    --popover-foreground: #e7e9ea;
+    --primary: #1c9cf0;
+    --primary-foreground: #ffffff;
+    --secondary: #f0f3f4;
+    --secondary-foreground: #0f1419;
+    --muted: #181818;
+    --muted-foreground: #72767a;
+    --accent: #061622;
+    --accent-foreground: #1c9cf0;
+    --destructive: #f4212e;
+    --destructive-foreground: #ffffff;
+    --border: #242628;
+    --input: #22303c;
+    --ring: #1da1f2;
+    --chart-1: #1e9df1;
+    --chart-2: #00b87a;
+    --chart-3: #f7b928;
+    --chart-4: #17bf63;
+    --chart-5: #e0245e;
+    --sidebar: #17181c;
+    --sidebar-foreground: #d9d9d9;
+    --sidebar-primary: #1da1f2;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #061622;
+    --sidebar-accent-foreground: #1c9cf0;
+    --sidebar-border: #38444d;
+    --sidebar-ring: #1da1f2;
+    --font-sans: Poppins, ui-sans-serif, sans-serif, system-ui;
+    --font-serif: Aleo, ui-serif, serif;
+    --font-mono: Fira Code, ui-monospace, monospace;
+    --radius: 1.3rem;
+    --shadow-x: 0px;
+    --shadow-y: 2px;
+    --shadow-blur: 0px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0;
+    --shadow-color: rgba(29,161,242,0.25);
+    --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+    --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .fl-cal-label {
+    @apply block font-sans text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide;
+  }
+  .fl-cal-input {
+    @apply w-full border border-gray-300 rounded-lg px-3 py-2.5 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent transition;
+  }
+}
+
+[data-profile] {
+  scroll-margin-top: 150px !important; /* 64px navbar + 16px breathing room */
+}
+
+/* ── Base resets ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background-color: #f5f0e8;
+  font-family: Lato;
+  color: #82a4c6;
+}
+
+/* ── Editable content (preserves directive hook) ─────────────── */
+[appEditableText]:hover {
+  outline: 2px dashed #b8932a;
+  outline-offset: 3px;
+  cursor: text;
+  border-radius: 2px;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f5f0e8; }
+::-webkit-scrollbar-thumb { background: #4d545b; border-radius: 3px; }
+
+/* ── Prose helper for editable rich content ──────────────────── */
+.fl-prose {
+  line-height: 1.75;
+  font-size: medium;
+  p + p { margin-top: 0.75em; }
+  strong { font-weight: 600; color: #1a3a5c; }
+  a { color: #2d6a9f; text-decoration: underline; }
+}
+
+@font-face {
+  font-family: 'Lato';
+  font-weight: 300, 400, 500, 600;
+  font-style: normal;
+  src: url('./assets/fonts/lato/Lato-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-weight: 300, 400, 500, 600;
+  font-style: normal;
+  src: url('./assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+}
+
+.init-loader {
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  width: 300px;
+  line-height: 200px;
+  font-size: large;
+  text-align: center;
+  color: #DCDCDC;
+  z-index: 999;
+  box-shadow: 0 0 0 9999px #e6e6e6;
+  height: 45vh;
+  margin-left: -150px;
+  margin-top: -100px;
+  background-color: #fff;
+  border: 2px solid #006A56;
+}

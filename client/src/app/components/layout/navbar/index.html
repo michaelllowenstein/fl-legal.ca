@@ -1,0 +1,146 @@
+<header
+  class="fixed top-0 left-0 right-0 z-40 transition-shadow duration-300"
+  [class.shadow-lg]="scrolled()"
+  [class.bg-brand-dark]="true">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+
+    <!-- Logo + wordmark -->
+    <a routerLink="/" class="flex items-center gap-3 group">
+      <img
+        [src]="webMenu().source"
+        [alt]="webMenu().alt"
+        class="h-12 w-auto object-contain" />
+      <div class="flex flex-col leading-tight">
+        <span class="font-display text-brand-gold text-xl font-semibold
+                      tracking-wide group-hover:text-white transition-colors">
+          Fric, Lowenstein &amp; Co.
+        </span>
+        <span class="font-sans text-white/60 text-[13px] uppercase tracking-widest">
+          Barristers &amp; Solicitors
+        </span>
+      </div>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1">
+
+      <!-- Standard nav links -->
+      @for (link of navLinks; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="text-brand-gold border-b-2 border-brand-gold"
+          class="font-sans text-sm text-white/80 hover:text-white px-3 py-5
+                  border-b-2 border-transparent transition-colors duration-200">
+          {{ link.label }}
+        </a>
+      }
+
+      <!-- Contact Us nav link -->
+      <a
+        routerLink="/contact-us"
+        routerLinkActive="text-brand-gold border-b-2 border-brand-gold"
+        class="font-sans text-sm text-white/80 hover:text-white px-3 py-5
+                border-b-2 border-transparent transition-colors duration-200">
+        Contact Us
+      </a>
+
+      <!-- Inquiry pill — icon expands to button on hover -->
+      <div class="relative ml-2 group/inquiry">
+        <button
+          (click)="openInquiry()"
+          class="flex items-center overflow-hidden rounded-full
+                  bg-brand-gold/15 hover:bg-brand-gold
+                  border border-brand-gold/40 hover:border-brand-gold
+                  text-brand-gold hover:text-brand-dark
+                  transition-all duration-300 ease-out
+                  h-8
+                  w-8 hover:w-36
+                  px-2 hover:px-3.5"
+          aria-label="Make an Inquiry">
+
+          <!-- FLIcon — always visible -->
+          <app-fl-icon
+            name="envelope"
+            class="w-4 h-4 shrink-0 transition-transform duration-300
+                    group-hover/inquiry:scale-90" />
+
+          <!-- Label — fades in on hover -->
+          <span
+            class="font-sans text-sm font-semibold whitespace-nowrap
+                    overflow-hidden transition-all duration-300
+                    max-w-0 opacity-0 ml-0
+                    group-hover/inquiry:max-w-[120px]
+                    group-hover/inquiry:opacity-100
+                    group-hover/inquiry:ml-2">
+            Inquiry?
+          </span>
+        </button>
+      </div>
+
+    </nav>
+
+    <!-- Mobile toggle -->
+    <button
+      class="md:hidden p-1.5 rounded hover:bg-white/10 transition-colors
+              flex items-center justify-center"
+      (click)="toggleMenu()"
+      [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'">
+      @if (menuOpen()) {
+        <app-fl-icon name="x-mark" class="w-7 h-7 text-white" />
+      } @else {
+        <img
+          [src]="mobileMenu().source"
+          [alt]="mobileMenu().alt"
+          class="h-8 w-auto object-contain" />
+      }
+    </button>
+
+  </div>
+
+  <!-- Mobile drawer -->
+  @if (menuOpen()) {
+    <div class="md:hidden bg-brand-dark border-t border-white/10 animate-slide-down">
+
+      @for (link of navLinks; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="text-brand-gold"
+          class="block font-sans text-white/80 hover:text-white hover:bg-white/5
+                  px-6 py-3 text-sm border-b border-white/5 transition-colors"
+          (click)="menuOpen.set(false)">
+          {{ link.label }}
+        </a>
+      }
+
+      <!-- Contact Us as regular link in mobile drawer -->
+      <a
+        routerLink="/contact-us"
+        routerLinkActive="text-brand-gold"
+        class="block font-sans text-white/80 hover:text-white hover:bg-white/5
+                px-6 py-3 text-sm border-b border-white/5 transition-colors"
+        (click)="menuOpen.set(false)">
+        Contact Us
+      </a>
+
+      <app-notification-bell />
+
+      <!-- Make an Inquiry as a distinct CTA row in mobile drawer -->
+      <div class="px-6 py-4">
+        <button
+          (click)="openInquiry(); menuOpen.set(false)"
+          class="w-full flex items-center justify-center gap-2
+                  font-sans text-sm bg-brand-gold hover:bg-yellow-500
+                  text-brand-dark font-semibold py-2.5 rounded-xl
+                  transition-colors">
+          <app-fl-icon name="envelope" class="w-4 h-4" />
+          Make an Inquiry
+        </button>
+      </div>
+
+    </div>
+  }
+</header>
+
+<!-- Spacer -->
+<div class="h-16"></div>

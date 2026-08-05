@@ -1,0 +1,18 @@
+{
+  "extends": "../server/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "..",
+    "baseUrl": "..",
+    "types": ["node", "@vercel/node"]
+  },
+  "include": ["./**/*.ts", "../server/src/**/*.ts"],
+  "exclude": [
+    "../node_modules",
+    "../client",
+    "../server/node_modules",
+    "../server/dist",
+    "../server/**/*.test.ts",
+    "../server/**/*.spec.ts"
+  ]
+}

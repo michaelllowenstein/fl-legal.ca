@@ -1,0 +1,9 @@
+
+    <a
+      [href]="mapsUrl()"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 font-sans text-sm text-brand-light hover:text-brand-gold underline underline-offset-2 transition-colors">
+      <app-fl-icon name="map-pin" class="w-4 h-4 shrink-0" />
+      {{ label() || pointOfInterest() }}
+    </a>

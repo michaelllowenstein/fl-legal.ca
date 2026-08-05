@@ -1,0 +1,72 @@
+{
+  "name": "fl-legal.ca",
+  "version": "3.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:install": "npm install --legacy-peer-deps",
+    "local": "ng serve --configuration local --port 4422",
+    "build:local": "ng build --configuration local",
+    "watch": "ng build --watch --configuration local",
+    "build:prod": "ng build --configuration production",
+    "ngo:service": "node scripts/gen.mjs --service",
+    "ngo:guard": "node scripts/gen.mjs --guard",
+    "ngo:pipe": "node scripts/gen.mjs --pipe",
+    "ngo:comp": "node scripts/gen.mjs",
+    "ngo": "node scripts/gen.mjs",
+    "test": "ng test",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "dependencies": {
+    "@angular/animations": "^21.2.6",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.1.0",
+    "@angular/core": "^20.1.0",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "^20.1.0",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@floating-ui/dom": "^1.7.6",
+    "@ng-icons/core": "^33.0.0",
+    "@ng-icons/heroicons": "^33.0.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "firebase": "^12.16.0",
+    "firebase-admin": "^14.1.0",
+    "html2pdf.js": "^0.14.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.1",
+    "@angular/cli": "^20.1.1",
+    "@angular/compiler-cli": "^20.1.0",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/angular": "^19.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/firebase": "^2.4.32",
+    "angular-eslint": "22.1.0",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^10.6.0",
+    "eslint-plugin-playwright": "^2.10.5",
+    "msw": "^2.15.0",
+    "postcss": "^8.5.8",
+    "prettier": "^3.9.5",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~5.8.2",
+    "typescript-eslint": "8.62.1"
+  }
+}

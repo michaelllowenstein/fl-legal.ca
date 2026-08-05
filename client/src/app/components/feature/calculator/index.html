@@ -1,0 +1,530 @@
+<div
+  class="bg-white rounded-2xl shadow-dialog w-full max-w-4xl animate-scale-in flex flex-col"
+  style="max-height: 90vh; color-scheme: light;"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="calc-title"
+  (click)="$event.stopPropagation()">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="flex items-start justify-between px-7 sm:px-8 pt-7 pb-5 border-b border-gray-100 shrink-0">
+    <div class="flex items-start gap-4">
+      <div class="shrink-0 w-11 h-11 rounded-xl bg-brand-gold/10 border border-brand-gold/25
+                  flex items-center justify-center mt-0.5">
+        <app-fl-icon name="scale" class="w-5 h-5 text-brand-gold" />
+      </div>
+      <div>
+        <h2 id="calc-title" class="font-display text-brand text-xl font-semibold">
+          {{ mode() === 'settings' ? 'Calculator Settings' : 'Estimate Your Costs' }}
+        </h2>
+        <p class="font-sans text-gray-400 text-sm mt-1">
+          {{ mode() === 'settings'
+            ? 'Admin-only: choose which fields appear per tab and tune disclaimers.'
+            : 'A quick approximation — not a firm quote.' }}
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1 -mt-1 -mr-1 shrink-0">
+      @if (mode() === 'calculator') {
+        <button
+          type="button"
+          (click)="useDefaults()"
+          class="font-sans text-[11px] font-medium text-gray-400 hover:text-brand-gold
+                 bg-black/5 hover:bg-brand-gold/10 px-2.5 py-1.5 rounded-lg transition-colors">
+          Use Defaults
+        </button>
+        <button
+          type="button"
+          class="text-gray-400 hover:text-brand-gold bg-black/5 hover:bg-brand-gold/10
+                 p-1.5 rounded-lg transition-colors"
+          aria-label="Calculator settings"
+          (click)="openSettings()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+      }
+      <button
+        class="text-gray-400 hover:text-gray-600 bg-black/5 hover:bg-black/10
+               p-1.5 rounded-lg transition-colors"
+        aria-label="Close"
+        (click)="close()">
+        <app-fl-icon name="x-mark" class="w-5 h-5" />
+      </button>
+    </div>
+  </div>
+
+  @if (mode() === 'calculator') {
+
+    <!-- ── Scrollable body ─────────────────────────────────────────────────── -->
+    <div class="overflow-y-auto px-7 sm:px-8 py-6 flex-1">
+
+      <!-- Tabs -->
+      <div class="flex gap-1.5 overflow-x-auto pb-2 -mx-1 px-1 mb-6">
+        @for (tab of tabs; track tab.id) {
+          <button
+            type="button"
+            (click)="activeTab.set(tab.id)"
+            class="shrink-0 font-sans text-[11px] sm:text-xs font-semibold uppercase tracking-wide
+                   px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border transition-all duration-200"
+            [class]="activeTab() === tab.id
+              ? 'bg-brand text-white border-brand shadow-md shadow-brand/20'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-brand-gold/40 hover:text-brand'">
+            {{ tab.label }}
+          </button>
+        }
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- Inputs -->
+        <div class="space-y-5">
+          @switch (activeTab()) {
+
+            @case ('purchase-mortgage') {
+              <div>
+                <label for="calc-price" class="fl-label">Property Purchase Price</label>
+                <input id="calc-price" type="number" min="0" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)" class="fl-input" />
+                <input type="range" min="100000" max="2000000" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                  class="w-full mt-2.5 accent-brand-gold" />
+              </div>
+              <div>
+                <label for="calc-mortgage" class="fl-label">Mortgage Amount</label>
+                <input id="calc-mortgage" type="number" min="0" step="5000"
+                  [ngModel]="mortgageAmount()" (ngModelChange)="onMortgageAmount($event)" class="fl-input" />
+                <p class="fl-hint">The amount being financed — usually less than the purchase price.</p>
+              </div>
+              @if (calcConfig.isIncluded('purchase-mortgage', 'titleInsurance')) {
+                <div>
+                  <label for="calc-title-ins-1" class="fl-label">Title Insurance (est.)</label>
+                  <input id="calc-title-ins-1" type="number" min="0" step="10"
+                    [ngModel]="titleInsurance()" (ngModelChange)="onTitleInsurance($event)" class="fl-input" />
+                  <p class="fl-hint">Lender and/or owner title insurance premium — varies by insurer and property value.</p>
+                </div>
+              }
+              @if (calcConfig.isIncluded('purchase-mortgage', 'otherDisbursements')) {
+                <div>
+                  <label for="calc-other-1" class="fl-label">Other Disbursements (est.)</label>
+                  <input id="calc-other-1" type="number" min="0" step="25"
+                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)" class="fl-input" />
+                  <p class="fl-hint">Tax certificate, courier and other file-specific costs — adjust to suit your file.</p>
+                </div>
+              }
+            }
+
+            @case ('cash-purchase') {
+              <div>
+                <label for="calc-price-2" class="fl-label">Property Purchase Price</label>
+                <input id="calc-price-2" type="number" min="0" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)" class="fl-input" />
+                <input type="range" min="100000" max="2000000" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                  class="w-full mt-2.5 accent-brand-gold" />
+              </div>
+              @if (calcConfig.isIncluded('cash-purchase', 'otherDisbursements')) {
+                <div>
+                  <label for="calc-other-2" class="fl-label">Other Disbursements (est.)</label>
+                  <input id="calc-other-2" type="number" min="0" step="25"
+                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)" class="fl-input" />
+                  <p class="fl-hint">Title insurance, tax certificate, courier and file-specific costs — adjust to suit your file.</p>
+                </div>
+              }
+            }
+
+            @case ('sale') {
+              <div>
+                <label for="calc-price-3" class="fl-label">Sale Price</label>
+                <input id="calc-price-3" type="number" min="0" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)" class="fl-input" />
+                <input type="range" min="100000" max="2000000" step="5000"
+                  [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                  class="w-full mt-2.5 accent-brand-gold" />
+              </div>
+              @if (saleReportAvailability().house && saleReportAvailability().condo) {
+                <div>
+                  <label class="fl-label">Property Type</label>
+                  <div class="flex gap-2">
+                    <button type="button" (click)="propertyKind.set('house')"
+                      class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                      [class]="propertyKind() === 'house' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                      House
+                    </button>
+                    <button type="button" (click)="propertyKind.set('condo')"
+                      class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                      [class]="propertyKind() === 'condo' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                      Condominium
+                    </button>
+                  </div>
+                </div>
+              }
+              @if (effectiveSaleKind() === 'house') {
+                <div>
+                  <label for="calc-rpr" class="fl-label">Real Property Report (est.)</label>
+                  <input id="calc-rpr" type="number" min="0" step="25"
+                    [ngModel]="rprFee()" (ngModelChange)="onRprFee($event)" class="fl-input" />
+                  <p class="fl-hint">A new RPR typically runs ~$850 if one isn't already on file and current.</p>
+                </div>
+              } @else if (effectiveSaleKind() === 'condo') {
+                <div>
+                  <label for="calc-estoppel" class="fl-label">Condominium Estoppel Certificate (est.)</label>
+                  <input id="calc-estoppel" type="number" min="0" step="10"
+                    [ngModel]="condoEstoppelFee()" (ngModelChange)="onCondoEstoppelFee($event)" class="fl-input" />
+                  <p class="fl-hint">Estoppel certificates typically cost $150–$350, depending on the condo corporation.</p>
+                </div>
+              }
+              <label
+                class="flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-colors select-none"
+                [class]="hasMortgage() ? 'bg-brand-gold/10 border-brand-gold/40' : 'bg-white border-gray-200 hover:border-brand-gold/40'">
+                <input type="checkbox"
+                  [ngModel]="hasMortgage()" (ngModelChange)="hasMortgage.set($event)"
+                  class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0" />
+                <span class="font-sans text-sm text-gray-600 leading-snug">
+                  There's an existing mortgage to discharge
+                </span>
+              </label>
+              @if (calcConfig.isIncluded('sale', 'titleInsurance')) {
+                <div>
+                  <label for="calc-title-ins-3" class="fl-label">Title Insurance (est.)</label>
+                  <input id="calc-title-ins-3" type="number" min="0" step="10"
+                    [ngModel]="titleInsurance()" (ngModelChange)="onTitleInsurance($event)" class="fl-input" />
+                  <p class="fl-hint">Lender and/or owner title insurance premium — varies by insurer and property value.</p>
+                </div>
+              }
+              @if (calcConfig.isIncluded('sale', 'otherDisbursements')) {
+                <div>
+                  <label for="calc-other-3" class="fl-label">Other Disbursements (est.)</label>
+                  <input id="calc-other-3" type="number" min="0" step="25"
+                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)" class="fl-input" />
+                  <p class="fl-hint">Tax certificate, payout statement fees and other file-specific costs.</p>
+                </div>
+              }
+            }
+
+            @case ('refinance') {
+              <div>
+                <label for="calc-refi-amount" class="fl-label">New Mortgage Amount</label>
+                <input id="calc-refi-amount" type="number" min="0" step="5000"
+                  [ngModel]="refinanceAmount()" (ngModelChange)="onRefinanceAmount($event)" class="fl-input" />
+                <input type="range" min="50000" max="2000000" step="5000"
+                  [ngModel]="refinanceAmount()" (ngModelChange)="onRefinanceAmount($event)"
+                  class="w-full mt-2.5 accent-brand-gold" />
+              </div>
+              <div>
+                <label for="calc-payouts" class="fl-label">Number of Payouts</label>
+                <input id="calc-payouts" type="number" min="1" step="1"
+                  [ngModel]="payoutCount()" (ngModelChange)="onPayoutCount($event)" class="fl-input" />
+                <p class="fl-hint">The base fee includes 1 payout; +$175 for each additional payout.</p>
+              </div>
+              @if (calcConfig.isIncluded('refinance', 'titleInsurance')) {
+                <div>
+                  <label for="calc-title-ins-4" class="fl-label">Title Insurance (est.)</label>
+                  <input id="calc-title-ins-4" type="number" min="0" step="10"
+                    [ngModel]="titleInsurance()" (ngModelChange)="onTitleInsurance($event)" class="fl-input" />
+                  <p class="fl-hint">Lender title insurance premium — varies by insurer and mortgage amount.</p>
+                </div>
+              }
+              @if (calcConfig.isIncluded('refinance', 'otherDisbursements')) {
+                <div>
+                  <label for="calc-other-4" class="fl-label">Other Disbursements (est.)</label>
+                  <input id="calc-other-4" type="number" min="0" step="25"
+                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)" class="fl-input" />
+                </div>
+              }
+            }
+
+            @case ('wills') {
+              <div>
+                <label class="fl-label">Preparing For</label>
+                <div class="flex gap-2">
+                  <button type="button" (click)="willParty.set('single')"
+                    class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                    [class]="willParty() === 'single' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                    Single Person
+                  </button>
+                  <button type="button" (click)="willParty.set('couple')"
+                    class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                    [class]="willParty() === 'couple' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                    Married Couple
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label for="calc-will-package" class="fl-label">Documents Needed</label>
+                <select id="calc-will-package" class="fl-input"
+                  [ngModel]="willPackage()" (ngModelChange)="willPackage.set($event)">
+                  <option value="will">Will Only</option>
+                  <option value="epa">Enduring Power of Attorney Only</option>
+                  <option value="pd">Personal Directive Only</option>
+                  <option value="willPlusOne">Will + EPA or Personal Directive</option>
+                  <option value="package">Will + EPA + Personal Directive (Full Package)</option>
+                  <option value="codicil">Codicil (Will Update)</option>
+                </select>
+              </div>
+            }
+
+            @case ('incorporation') {
+              <div>
+                <label class="fl-label">Structure</label>
+                <div class="flex gap-2">
+                  <button type="button" (click)="corpType.set('standard')"
+                    class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                    [class]="corpType() === 'standard' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                    Standard
+                  </button>
+                  <button type="button" (click)="corpType.set('professional')"
+                    class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                    [class]="corpType() === 'professional' ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                    Professional Corp.
+                  </button>
+                </div>
+              </div>
+              @if (calcConfig.isIncluded('incorporation', 'disbursements')) {
+                <div>
+                  <label for="calc-incorp-disb" class="fl-label">Disbursements (est.)</label>
+                  <input id="calc-incorp-disb" type="number" min="0" step="10"
+                    [ngModel]="incorpDisbursements()" (ngModelChange)="onIncorpDisbursements($event)" class="fl-input" />
+                  <p class="fl-hint">Name search / NUANS report and other filing-related costs.</p>
+                </div>
+              }
+            }
+          }
+        </div>
+
+        <!-- Results -->
+        <div>
+          @if (result().quoteOnly) {
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 h-full flex flex-col items-start justify-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <app-fl-icon name="document-text" class="w-5 h-5 text-amber-600" />
+              </div>
+              <p class="font-body text-sm text-amber-800 leading-relaxed">
+                {{ result().quoteNote }}
+              </p>
+              <button type="button" (click)="goToContact()"
+                class="inline-flex items-center gap-2 font-sans text-sm font-medium text-brand hover:text-brand-light hover:underline">
+                Contact Us for a Quote
+                <app-fl-icon name="arrow-right" class="w-4 h-4" />
+              </button>
+            </div>
+          } @else {
+            <div class="bg-brand-cream rounded-2xl border border-brand-gold/25 p-6 h-full flex flex-col">
+              <p class="font-sans text-[11px] uppercase tracking-wide text-gray-400 font-semibold mb-4">
+                Estimated Breakdown
+              </p>
+              <div class="space-y-2.5 flex-1">
+                @for (line of result().lines; track line.label) {
+                  <div class="flex items-baseline justify-between gap-4">
+                    <span class="font-body text-sm text-gray-500">{{ line.label }}</span>
+                    <span class="font-sans text-sm text-gray-500 shrink-0">{{ fmt(line.value) }}</span>
+                  </div>
+                }
+              </div>
+              <div class="border-t border-brand-gold/25 mt-4 pt-4 flex items-baseline justify-between">
+                <span class="font-display text-brand font-semibold text-base">Estimated Total</span>
+                <span class="font-display text-brand text-2xl font-bold">{{ fmt(result().total) }}</span>
+              </div>
+              @if (result().footnote) {
+                <p class="font-sans text-[11px] text-gray-400 leading-relaxed mt-3">{{ result().footnote }}</p>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+    <div class="px-7 sm:px-8 py-5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <p class="font-sans text-[11px] text-gray-400 max-w-sm leading-relaxed">
+        Fees &amp; disbursements are estimated. We cannot give a firm amount until we have
+        the file opened and reviewed. Title insurance is not included in this estimate and
+        may vary by lender, bank and/or circumstance.
+      </p>
+      <div class="flex items-center gap-3">
+        @if (pdfBlocked()) {
+          <span class="font-sans text-xs text-red-500">Please allow pop-ups to export a PDF.</span>
+        }
+        <button type="button" [disabled]="result().quoteOnly" (click)="exportPdf()"
+          class="inline-flex items-center gap-2 font-sans text-sm font-medium
+                 border border-gray-300 text-brand hover:border-brand-gold/40 hover:bg-brand-cream/40
+                 px-5 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+          <app-fl-icon name="document-text" class="w-4 h-4" />
+          Export to PDF
+        </button>
+        <button type="button" (click)="goToContact()"
+          class="inline-flex items-center gap-2 font-sans text-sm font-medium
+                 bg-brand hover:bg-brand-light text-white px-5 py-2.5 rounded-xl
+                 transition-all duration-200 hover:-translate-y-0.5 shadow-md shadow-brand/15">
+          <app-fl-icon name="envelope" class="w-4 h-4" />
+          Get an Exact Quote
+        </button>
+      </div>
+    </div>
+
+  } @else {
+
+    <!-- ── Settings body ────────────────────────────────────────────────────── -->
+    <div class="overflow-y-auto px-7 sm:px-8 py-6 flex-1">
+
+      @if (settingsLoading()) {
+
+        <!-- Loading spinner — visible for at least 600ms -->
+        <div class="flex flex-col items-center justify-center gap-4 py-16">
+          <div class="fl-spinner"></div>
+          <p class="font-sans text-sm text-gray-400">Loading configuration from server…</p>
+        </div>
+
+      } @else if (!settingsUnlocked()) {
+
+        <div class="max-w-xs mx-auto flex flex-col items-center text-center gap-4 py-10">
+          <div class="w-12 h-12 rounded-xl bg-brand-gold/10 border border-brand-gold/25 flex items-center justify-center">
+            <app-fl-icon name="lock-closed" class="w-5 h-5 text-brand-gold" />
+          </div>
+          <div>
+            <h3 class="font-display text-brand text-lg font-semibold">Admin Access</h3>
+            <p class="font-sans text-sm text-gray-400 mt-1">Enter the admin password to edit calculator settings.</p>
+          </div>
+          <input type="password"
+            [ngModel]="passwordInput()" (ngModelChange)="passwordInput.set($event)"
+            (keydown.enter)="tryUnlock()"
+            placeholder="Password" class="fl-input text-center" />
+          @if (passwordError()) {
+            <p class="font-sans text-xs text-red-500">Incorrect password.</p>
+          }
+          <button type="button" (click)="tryUnlock()"
+            class="inline-flex items-center gap-2 font-sans text-sm font-medium bg-brand hover:bg-brand-light
+                   text-white px-5 py-2.5 rounded-xl transition-colors">
+            Unlock
+          </button>
+        </div>
+
+      } @else {
+
+        <!-- Tab selector -->
+        <div class="flex gap-1.5 overflow-x-auto pb-2 mb-5">
+          @for (tab of tabs; track tab.id) {
+            <button type="button" (click)="settingsTab.set(tab.id)"
+              class="shrink-0 font-sans text-[11px] font-semibold uppercase tracking-wide px-3 py-2 rounded-lg border transition-colors"
+              [class]="settingsTab() === tab.id
+                ? 'bg-brand text-white border-brand'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-brand-gold/40'">
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+
+        <!-- Field toggles for the selected tab -->
+        <div class="space-y-3">
+          @for (fieldKey of fieldKeysFor(settingsTab()); track fieldKey) {
+            <div class="border border-gray-200 rounded-xl p-3.5 flex flex-col gap-2.5">
+              <div class="flex items-center justify-between gap-3 flex-wrap">
+                <label class="flex items-center gap-2 font-sans text-sm text-gray-700 font-medium">
+                  <input type="checkbox"
+                    [ngModel]="isFieldIncluded(settingsTab(), fieldKey)"
+                    (ngModelChange)="setFieldIncluded(settingsTab(), fieldKey, $event)"
+                    class="w-4 h-4 accent-brand-gold cursor-pointer" />
+                  {{ fieldKey }}
+                </label>
+                @if (fieldHasTaxable(settingsTab(), fieldKey)) {
+                  <label class="flex items-center gap-1.5 font-sans text-xs text-gray-400 cursor-pointer">
+                    <input type="checkbox"
+                      [ngModel]="isFieldTaxable(settingsTab(), fieldKey)"
+                      (ngModelChange)="setFieldTaxable(settingsTab(), fieldKey, $event)"
+                      class="w-3.5 h-3.5 accent-brand-gold cursor-pointer" />
+                    Taxable (GST)
+                  </label>
+                }
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text"
+                  [ngModel]="fieldLabelValue(settingsTab(), fieldKey)"
+                  (ngModelChange)="setFieldLabel(settingsTab(), fieldKey, $event)"
+                  placeholder="Display label" class="fl-input text-xs py-1.5" />
+                @if (fieldHasDefault(settingsTab(), fieldKey)) {
+                  <input type="number"
+                    [ngModel]="fieldDefaultValue(settingsTab(), fieldKey)"
+                    (ngModelChange)="setFieldDefault(settingsTab(), fieldKey, $event)"
+                    placeholder="Default amount" class="fl-input text-xs py-1.5" />
+                }
+              </div>
+            </div>
+          }
+
+          <div>
+            <label class="fl-label">Disclaimer / Footnote</label>
+            <textarea rows="3"
+              [ngModel]="disclaimerValue(settingsTab())"
+              (ngModelChange)="setDisclaimer(settingsTab(), $event)"
+              class="fl-input"></textarea>
+          </div>
+        </div>
+
+        <!-- Raw JSON model -->
+        <div class="mt-6 border-t border-gray-100 pt-5">
+          <button type="button" (click)="showRawJson.set(!showRawJson())"
+            class="font-sans text-xs font-medium text-brand hover:underline">
+            {{ showRawJson() ? 'Hide' : 'Show' }} raw JSON model
+          </button>
+          @if (showRawJson()) {
+            <textarea rows="12"
+              [ngModel]="rawJsonDraft()" (ngModelChange)="rawJsonDraft.set($event)"
+              class="fl-input font-mono text-[11px] mt-2 leading-relaxed"></textarea>
+            <div class="flex items-center gap-3 mt-2">
+              <button type="button" (click)="applyRawJson()"
+                class="font-sans text-xs font-medium border border-gray-300 text-brand hover:border-brand-gold/40
+                       px-3 py-1.5 rounded-lg transition-colors">
+                Apply JSON
+              </button>
+              @if (rawJsonError()) {
+                <span class="font-sans text-xs text-red-500">{{ rawJsonError() }}</span>
+              }
+            </div>
+          }
+        </div>
+
+      }
+    </div>
+
+    <!-- ── Settings footer ──────────────────────────────────────────────────── -->
+    <div class="px-7 sm:px-8 py-5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      @if (settingsUnlocked()) {
+        <div class="flex items-center gap-3">
+          <button type="button" (click)="resetConfig()"
+            class="font-sans text-xs text-gray-400 hover:text-red-500 transition-colors">
+            Reset to Defaults
+          </button>
+          @if (isDirty()) {
+            <span class="font-sans text-xs text-amber-500 font-medium">Unsaved changes</span>
+          }
+        </div>
+      } @else {
+        <span></span>
+      }
+      <div class="flex items-center gap-3">
+        <button type="button" (click)="closeSettings()"
+          class="inline-flex items-center gap-2 font-sans text-sm font-medium
+                 border border-gray-300 text-brand hover:border-brand-gold/40 hover:bg-brand-cream/40
+                 px-5 py-2.5 rounded-xl transition-colors">
+          {{ isDirty() ? 'Discard Changes' : 'Close' }}
+        </button>
+        @if (settingsUnlocked()) {
+          <button type="button" (click)="submitChanges()"
+            [disabled]="!isDirty() || submitting()"
+            class="inline-flex items-center gap-2 font-sans text-sm font-medium
+                   bg-brand hover:bg-brand-light text-white px-5 py-2.5 rounded-xl
+                   transition-all duration-200 hover:-translate-y-0.5 shadow-md shadow-brand/15
+                   disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0">
+            <app-fl-icon name="check" class="w-4 h-4" />
+            {{ submitting() ? 'Saving…' : 'Submit Changes' }}
+          </button>
+        }
+      </div>
+    </div>
+
+  }
+
+</div>

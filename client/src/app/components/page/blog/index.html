@@ -1,0 +1,197 @@
+<!-- Banner -->
+<div class="bg-brand-dark py-16 px-4 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(184,147,42,0.1),transparent_55%)] pointer-events-none"></div>
+  <span class="inline-block font-sans text-brand-gold text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">
+    Insights
+  </span>
+  <h1 class="font-display text-white text-4xl md:text-5xl font-semibold mt-1">Legal Blog</h1>
+  <p class="font-sans text-white/50 text-sm mt-3 max-w-md mx-auto">
+    Practical legal insights for Calgarians and Alberta businesses
+  </p>
+</div>
+
+<!-- ── Skeleton loading ─────────────────────────────────────────────────────── -->
+@if (loading()) {
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 space-y-10">
+    <!-- Featured skeleton -->
+    <div class="h-72 bg-gray-200 rounded-3xl animate-[shimmer_1.6s_linear_infinite]
+                bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:1200px_100%]">
+    </div>
+    <!-- Grid skeleton -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (_ of [1,2,3]; track $index) {
+        <div class="bg-white rounded-2xl overflow-hidden shadow-card animate-pulse">
+          <div class="h-44 bg-gray-200"></div>
+          <div class="p-5 space-y-2.5">
+            <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+            <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div class="h-3 bg-gray-100 rounded w-full"></div>
+            <div class="h-3 bg-gray-100 rounded w-4/6"></div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+<!-- ── Empty state ──────────────────────────────────────────────────────────── -->
+} @else if (entries().length === 0) {
+  <div class="max-w-lg mx-auto px-4 py-24 text-center animate-fade-up">
+    <div class="w-20 h-20 rounded-full bg-brand/8 flex items-center justify-center mx-auto mb-6">
+      <app-fl-icon name="document-text" class="w-10 h-10 text-brand/30" />
+    </div>
+    <h2 class="font-display text-brand text-2xl font-semibold mb-3">No Posts Yet</h2>
+    <p class="font-sans text-gray-500 text-sm">Check back soon for legal insights and firm updates.</p>
+  </div>
+
+<!-- ── Content ──────────────────────────────────────────────────────────────── -->
+} @else {
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+
+    <!-- Category pills -->
+    @if (categories().length > 2) {
+      <div class="flex flex-wrap gap-2 mb-10">
+        @for (cat of categories(); track cat) {
+          <button
+            class="font-sans text-xs font-semibold px-4 py-1.5 rounded-full
+                   transition-all duration-200"
+            [class.bg-brand]="activeCategory() === cat"
+            [class.text-white]="activeCategory() === cat"
+            [class.shadow-md]="activeCategory() === cat"
+            [class.bg-white]="activeCategory() !== cat"
+            [class.text-gray-500]="activeCategory() !== cat"
+            [class.shadow-card]="activeCategory() !== cat"
+            [class.hover:bg-brand-cream]="activeCategory() !== cat"
+            (click)="activeCategory.set(cat)">
+            {{ cat }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Featured post -->
+    @if (featured()) {
+      <a
+        [routerLink]="'/blog/' + featured()!.id"
+        class="group block mb-10 animate-fade-up">
+        <article
+          class="relative rounded-3xl overflow-hidden bg-brand-dark
+                 min-h-[340px] md:min-h-[420px] flex items-end
+                 hover:shadow-dialog transition-shadow duration-300">
+
+          @if (featured()!.imageUrl) {
+            <img
+              [src]="featured()!.imageUrl"
+              [alt]="featured()!.title"
+              class="absolute inset-0 w-full h-full object-cover
+                     group-hover:scale-105 transition-transform duration-700 ease-out" />
+          }
+          <!-- Gradient -->
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent"></div>
+
+          <div class="relative p-8 md:p-10 max-w-3xl">
+            @if (featured()!.category) {
+              <span class="inline-block font-sans text-brand-gold text-[11px] uppercase
+                           tracking-[0.2em] font-semibold mb-3">
+                {{ featured()!.category }}
+              </span>
+            }
+            <h2 class="font-display text-white text-2xl md:text-3xl font-semibold
+                       leading-snug mb-3 group-hover:text-brand-gold/90 transition-colors">
+              {{ featured()!.title }}
+            </h2>
+            @if (featured()!.excerpt) {
+              <p class="font-sans text-white/65 text-sm leading-relaxed line-clamp-2 mb-4">
+                {{ featured()!.excerpt }}
+              </p>
+            }
+            <div class="flex items-center gap-3">
+              <span class="font-sans text-white/50 text-xs">
+                {{ formatDate(featured()!.date) }}
+              </span>
+              @if (featured()!.author) {
+                <span class="text-white/30 text-xs">·</span>
+                <span class="font-sans text-white/50 text-xs">{{ featured()!.author }}</span>
+              }
+              <span class="ml-auto inline-flex items-center gap-1.5 font-sans text-sm
+                           text-brand-gold font-medium group-hover:gap-2.5 transition-all">
+                Read Article
+                <app-fl-icon name="arrow-right" class="w-4 h-4" />
+              </span>
+            </div>
+          </div>
+        </article>
+      </a>
+    }
+
+    <!-- Post grid -->
+    @if (rest().length > 0) {
+      <div
+        class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+        [@listStagger]="rest().length">
+        @for (entry of rest(); track entry.id; let i = $index) {
+          <a
+            [routerLink]="'/blog/' + entry.id"
+            class="group block"
+            [style.animation-delay]="(i * 50) + 'ms'">
+            <article
+              class="bg-white rounded-2xl shadow-card overflow-hidden
+                     hover:shadow-dialog transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+
+              <!-- Thumbnail -->
+              <div class="h-48 overflow-hidden shrink-0">
+                @if (entry.imageUrl) {
+                  <img
+                    [src]="entry.imageUrl"
+                    [alt]="entry.title"
+                    class="w-full h-full object-cover group-hover:scale-105
+                           transition-transform duration-500 ease-out" />
+                } @else {
+                  <div class="w-full h-full bg-gradient-to-br from-brand/8 to-brand/15
+                              flex items-center justify-center">
+                    <app-fl-icon name="document-text" class="w-10 h-10 text-brand/25" />
+                  </div>
+                }
+              </div>
+
+              <!-- Body -->
+              <div class="p-5 flex flex-col flex-1">
+                <div class="flex items-center gap-2 mb-2.5 flex-wrap">
+                  @if (entry.category) {
+                    <span class="font-sans text-[10px] font-semibold uppercase tracking-wider
+                                 text-white bg-brand px-2 py-0.5 rounded-full">
+                      {{ entry.category }}
+                    </span>
+                  }
+                  <span class="font-sans text-gray-400 text-xs">{{ formatDate(entry.date) }}</span>
+                  @if (entry.author) {
+                    <span class="font-sans text-gray-400 text-xs">· {{ entry.author }}</span>
+                  }
+                </div>
+
+                <h2
+                  class="font-display text-brand text-base font-semibold leading-snug
+                         mb-2.5 group-hover:text-brand-light transition-colors duration-200 flex-1">
+                  {{ entry.title }}
+                </h2>
+
+                @if (entry.excerpt) {
+                  <p class="font-sans text-gray-500 text-sm leading-relaxed
+                             line-clamp-2 mb-4">
+                    {{ entry.excerpt }}
+                  </p>
+                }
+
+                <span
+                  class="inline-flex items-center gap-1.5 font-sans text-sm text-brand-light
+                         font-medium group-hover:gap-2.5 transition-all duration-200 mt-auto">
+                  Read More
+                  <app-fl-icon name="arrow-right" class="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </article>
+          </a>
+        }
+      </div>
+    }
+  </div>
+}

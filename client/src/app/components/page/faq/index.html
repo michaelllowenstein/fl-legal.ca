@@ -1,0 +1,103 @@
+<!-- Banner -->
+<div class="bg-brand-dark py-16 px-4 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,147,42,0.08),transparent_65%)]
+              pointer-events-none"></div>
+  <span class="inline-block font-sans text-brand-gold text-[11px] uppercase
+               tracking-[0.2em] font-semibold mb-3">Knowledge</span>
+  <h1 class="font-display text-white text-4xl md:text-5xl font-semibold mt-1">
+    Frequently Asked Questions
+  </h1>
+  <p class="font-sans text-white/50 text-sm mt-3 max-w-sm mx-auto">
+    Answers to common legal questions from our Calgary clients
+  </p>
+</div>
+ 
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-14">
+ 
+  <!-- Intro -->
+  @if (intro()) {
+    <p class="font-body text-gray-600 text-base leading-relaxed mb-10 text-center animate-fade-up"
+       [innerHTML]="intro() | safeHtml">
+    </p>
+  }
+ 
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (_ of [1,2,3,4,5,6]; track $index) {
+        <div class="bg-white rounded-2xl p-5 animate-pulse shadow-card">
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (item of faqs(); track $index) {
+        <div
+          class="bg-white rounded-2xl overflow-hidden transition-all duration-300"
+          [class.shadow-dialog]="openIndex() === $index"
+          [class.shadow-card]="openIndex() !== $index"
+          [class.ring-1]="openIndex() === $index"
+          [class.ring-brand-gold/30]="openIndex() === $index">
+ 
+          <button
+            class="w-full flex items-center justify-between px-6 py-5 text-left
+                   hover:bg-brand-cream/40 transition-colors duration-200 rounded-2xl"
+            [attr.aria-expanded]="openIndex() === $index"
+            (click)="toggle($index)"
+            (keydown.enter)="toggle($index)"
+            (keydown.space)="toggle($index)">
+            <span
+              class="font-display text-brand font-medium text-base pr-6 leading-snug
+                     transition-colors duration-200"
+              [class.text-brand-light]="openIndex() === $index"
+              [appEditableText]="'faq/faqs/' + $index + '/question'"
+              [innerHTML]="item.question | safeHtml">
+            </span>
+            <div
+              class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center
+                     transition-all duration-300"
+              [class.bg-brand-gold]="openIndex() === $index"
+              [class.rotate-180]="openIndex() === $index"
+              [class.bg-brand/8]="openIndex() !== $index">
+              <app-fl-icon
+                name="chevron-down"
+                class="w-4 h-4 transition-colors"
+                [class.text-white]="openIndex() === $index"
+                [class.text-brand]="openIndex() !== $index" />
+            </div>
+          </button>
+ 
+          @if (openIndex() === $index) {
+            <div @accordion class="px-6 pb-6">
+              <div class="pt-1 border-t border-gray-100">
+                <div
+                  class="font-body text-gray-600 text-sm leading-[1.85] fl-prose pt-4
+                         [&_ul]:mt-3 [&_ul]:space-y-1.5 [&_ul]:ml-4
+                         [&_li]:flex [&_li]:gap-2 [&_li]:items-start
+                         [&_a]:text-brand-light [&_a]:underline [&_a]:underline-offset-2"
+                  [appEditableText]="'faq/faqs/' + $index + '/answer'"
+                  [innerHTML]="item.answer | safeHtml">
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+ 
+    <!-- CTA -->
+    <div class="mt-12 text-center">
+      <p class="font-sans text-gray-500 text-sm mb-4">
+        Didn't find what you're looking for?
+      </p>
+      <a
+        routerLink="/contact-us"
+        class="inline-flex items-center gap-2 font-sans text-sm bg-brand
+               hover:bg-brand-light text-white font-medium px-6 py-3 rounded-xl
+               transition-all duration-200 hover:-translate-y-0.5">
+        Ask Us Directly
+        <app-fl-icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  }
+</div>

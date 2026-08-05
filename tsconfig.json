@@ -1,0 +1,27 @@
+{
+  "ignoreDeprecations": "6.0",
+  "compilerOptions": {
+    "target":           "ES2020",
+    "module":           "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop":  true,
+    "ignoreDeprecations": "6.0",
+    "strict":           false,
+    "skipLibCheck":     true,
+    "rootDir":          "./",
+    "paths": {
+      "@api":           ["./api"],
+      "@config":        ["./server/src/config/index.ts"],
+      "@schema":        ["./server/src/schema/index.ts"],
+      "@schema/*":      ["./server/src/schema/*"],
+      "@services/*":    ["./server/src/services/*"],
+      "@plugins/*":     ["./server/src/plugins/*"],
+      "@routes/*":      ["./server/src/routes/*"]
+    },
+    "outDir": "dist"
+  },
+  "include": [
+    "api/**/*.ts",
+    "server/src/**/*.ts"
+  ]
+}

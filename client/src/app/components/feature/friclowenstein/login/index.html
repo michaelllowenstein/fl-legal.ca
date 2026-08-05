@@ -1,0 +1,55 @@
+
+    <div class="min-h-screen bg-brand-dark flex items-center justify-center px-4 py-12">
+      <div class="bg-white rounded-2xl shadow-dialog w-full max-w-sm p-8">
+ 
+        <div class="text-center mb-8">
+          <div class="w-14 h-14 rounded-full bg-brand/10 flex items-center justify-center mx-auto mb-4">
+            <app-fl-icon name="lock-closed" class="w-7 h-7 text-brand" />
+          </div>
+          <h1 class="font-display text-brand text-2xl font-semibold">Lawyer Portal</h1>
+          <p class="font-sans text-gray-500 text-sm mt-1">Sign in to access the firm calendar</p>
+        </div>
+ 
+        <div class="space-y-4">
+          <div>
+            <label class="block font-sans text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">
+              Username
+            </label>
+            <input type="text" [(ngModel)]="username" (keyup.enter)="login()"
+              placeholder="Your username"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2.5 font-sans text-sm
+                     focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent transition"
+              [class.border-red-400]="error()" />
+          </div>
+ 
+          <div>
+            <label class="block font-sans text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">
+              Password
+            </label>
+            <input type="password" [(ngModel)]="password" (keyup.enter)="login()"
+              placeholder="••••••••"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2.5 font-sans text-sm
+                     focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent transition"
+              [class.border-red-400]="error()" />
+          </div>
+ 
+          @if (error()) {
+            <p class="font-sans text-xs text-red-500 animate-fade-in">{{ error() }}</p>
+          }
+ 
+          <button
+            class="w-full font-sans text-sm bg-brand hover:bg-brand-light text-white font-medium
+                   rounded-lg py-3 mt-2 transition-colors disabled:opacity-50
+                   flex items-center justify-center gap-2"
+            [disabled]="loading()"
+            (click)="login()">
+            @if (loading()) {
+              <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+            } @else {
+              Sign In
+              <app-fl-icon name="arrow-right" class="w-4 h-4" />
+            }
+          </button>
+        </div>
+      </div>
+    </div>

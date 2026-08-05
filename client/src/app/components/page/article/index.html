@@ -1,0 +1,160 @@
+<!-- Reading progress bar — fixed top -->
+<div
+  class="fixed top-0 left-0 right-0 z-[60] h-[3px] bg-brand-gold/20 pointer-events-none">
+  <div
+    class="h-full bg-brand-gold transition-all duration-100 origin-left"
+    [style.width]="readProgress() + '%'">
+  </div>
+</div>
+
+<!-- ── Loading ─────────────────────────────────────────────────────────────── -->
+@if (loading()) {
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 space-y-6 animate-pulse">
+    <div class="h-3 bg-gray-200 rounded w-24"></div>
+    <div class="h-8 bg-gray-200 rounded w-5/6"></div>
+    <div class="h-8 bg-gray-200 rounded w-3/5"></div>
+    <div class="h-[2px] bg-gray-100 rounded"></div>
+    <div class="space-y-3">
+      @for (_ of [1,2,3,4,5]; track $index) {
+        <div class="h-3.5 bg-gray-100 rounded" [class.w-full]="$index % 2 === 0" [class.w-4/5]="$index % 2 !== 0"></div>
+      }
+    </div>
+  </div>
+
+<!-- ── Not found ──────────────────────────────────────────────────────────── -->
+} @else if (!entry()) {
+  <div class="max-w-lg mx-auto px-4 py-28 text-center animate-fade-up">
+    <div class="w-20 h-20 rounded-full bg-brand/8 flex items-center justify-center mx-auto mb-6">
+      <app-fl-icon name="document-text" class="w-10 h-10 text-brand/25" />
+    </div>
+    <h1 class="font-display text-brand text-2xl font-semibold mb-3">Article Not Found</h1>
+    <p class="font-sans text-gray-500 text-sm mb-8">
+      This post may have been moved or removed.
+    </p>
+    <a
+      routerLink="/blog"
+      class="inline-flex items-center gap-2 font-sans text-sm bg-brand hover:bg-brand-light
+             text-white font-medium px-5 py-2.5 rounded-xl transition-colors">
+      <app-fl-icon name="arrow-left" class="w-4 h-4" />
+      Back to Blog
+    </a>
+  </div>
+
+<!-- ── Article ─────────────────────────────────────────────────────────────── -->
+} @else {
+
+  <!-- Hero image or gradient header -->
+  @if (entry()!.imageUrl) {
+    <div class="h-[45vh] md:h-[55vh] overflow-hidden relative">
+      <img
+        [src]="entry()!.imageUrl"
+        [alt]="entry()!.title"
+        class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-brand-dark/30 to-transparent"></div>
+      <!-- Title overlay on large image -->
+      <div class="absolute bottom-0 left-0 right-0 max-w-3xl mx-auto px-4 sm:px-6 pb-10">
+        @if (entry()!.category) {
+          <span class="inline-block font-sans text-brand-gold text-[11px] uppercase
+                       tracking-[0.2em] font-semibold mb-3">
+            {{ entry()!.category }}
+          </span>
+        }
+        <h1 class="font-display text-white text-3xl md:text-4xl font-semibold leading-snug">
+          {{ entry()!.title }}
+        </h1>
+      </div>
+    </div>
+  } @else {
+    <div class="bg-brand-dark py-16 px-4 relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(184,147,42,0.1),transparent_60%)] pointer-events-none"></div>
+      @if (entry()!.category) {
+        <p class="text-center font-sans text-brand-gold text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">
+          {{ entry()!.category }}
+        </p>
+      }
+      <h1 class="font-display text-white text-3xl md:text-4xl font-semibold leading-snug
+                 text-center max-w-3xl mx-auto">
+        {{ entry()!.title }}
+      </h1>
+    </div>
+  }
+
+  <!-- Article body -->
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12 animate-fade-up">
+
+    <!-- Back link -->
+    <a
+      routerLink="/blog"
+      class="inline-flex items-center gap-1.5 font-sans text-sm text-gray-400
+             hover:text-brand transition-colors mb-8 group">
+      <app-fl-icon name="arrow-left"
+               class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+      Back to Blog
+    </a>
+
+    <!-- Meta bar -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8 pb-8
+                border-b border-gray-100">
+      <span class="font-sans text-brand-gold text-xs font-semibold uppercase tracking-wide">
+        {{ formatDate(entry()!.date) }}
+      </span>
+      @if (entry()!.author) {
+        <span class="flex items-center gap-1.5 font-sans text-gray-500 text-xs">
+          <div class="w-5 h-5 rounded-full bg-brand/10 flex items-center justify-center">
+            <app-fl-icon name="user" class="w-3 h-3 text-brand" />
+          </div>
+          {{ entry()!.author }}
+        </span>
+      }
+      <span class="flex items-center gap-1.5 font-sans text-gray-400 text-xs ml-auto">
+        <app-fl-icon name="document-text" class="w-3.5 h-3.5" />
+        {{ readTime() }} min read
+      </span>
+    </div>
+
+    <!-- Title (when no hero image) -->
+    @if (!entry()!.imageUrl) {
+      <!-- Title already shown in the dark banner above — omit here -->
+    }
+
+    <!-- Body -->
+    <div
+      class="article-prose font-body text-gray-700 text-[1.0625rem] leading-[1.9]"
+      [innerHTML]="entry()!.content | safeHtml">
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-14 pt-8 border-t border-gray-100 flex flex-wrap items-center gap-4">
+      <a
+        routerLink="/blog"
+        class="inline-flex items-center gap-2 font-sans text-sm bg-brand hover:bg-brand-light
+               text-white font-medium px-5 py-2.5 rounded-xl transition-all duration-200
+               hover:-translate-y-0.5">
+        <app-fl-icon name="arrow-left" class="w-4 h-4" />
+        All Articles
+      </a>
+      <a
+        routerLink="/contact-us"
+        class="inline-flex items-center gap-2 font-sans text-sm border-2 border-brand
+               text-brand hover:bg-brand hover:text-white font-medium px-5 py-2.5 rounded-xl
+               transition-all duration-200 hover:-translate-y-0.5">
+        Get Legal Advice
+        <app-fl-icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </div>
+
+}
+
+<!-- Scroll to top FAB -->
+@if (showScrollTop()) {
+  <button
+    class="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-brand shadow-dialog
+           text-white flex items-center justify-center
+           hover:bg-brand-light hover:-translate-y-1 transition-all duration-200
+           animate-scale-in"
+    aria-label="Scroll to top"
+    (click)="scrollTop()">
+    <app-fl-icon name="chevron-up" class="w-5 h-5" />
+  </button>
+}
