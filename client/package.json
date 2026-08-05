@@ -42,6 +42,7 @@
     "@ng-icons/core": "^33.0.0",
     "@ng-icons/heroicons": "^33.0.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "@vercel/analytics": "^2.0.1",
     "firebase": "^12.16.0",
     "firebase-admin": "^14.1.0",
     "html2pdf.js": "^0.14.0",

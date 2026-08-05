@@ -18,5 +18,5 @@ export const env = {
     longitude: -114.06998756735986,
     latitude: 50.955083281651376,
   },
-  apiURL: 'https://api-fl-legal-ca.onrender.com'
+  apiURL: ''
 };
