@@ -11,7 +11,7 @@
     "stage:app": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run start:api\" \"npm run start:client\"",
     "build:app": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
     "build:client": "cd client && npm run build -- --configuration production",
-    "install:prod": "npm ci --legacy-peer-deps"
+    "install:prod": "npm ci --legacy-peer-deps && cd client && npm install --legacy-peer-deps && cd ../server && npm install && cd .."
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
