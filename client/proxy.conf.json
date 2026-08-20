@@ -4,11 +4,5 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn"
-  },
-  "/api/v1": {
-    "target": "",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "error"
   }
 }

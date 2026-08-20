@@ -67,6 +67,7 @@ import { contentRoutes } from '@routes/content';
 import { inquiryRoutes } from '@routes/inquiry';
 import { calendarRoutes } from '@routes/calendar';
 import { calcConfigRoutes } from '@routes/calc-config';
+import diagnosticsRoutes from '@routes/diagnostics';
 import { initFirebase } from '@services/firebase';
 
 // ─── TLS helper ───────────────────────────────────────────────────────────────
@@ -188,6 +189,10 @@ export async function buildApp(opts?: Partial<FastifyServerOptions>): Promise<Fa
     env: config.nodeEnv,
     ts: new Date().toISOString(),
   }));
+
+  fastify.register(diagnosticsRoutes, {
+    prefix: '/api/diagnostics'
+  });
 
   fastify.register(authRoutes, {
     prefix: '/api/auth',

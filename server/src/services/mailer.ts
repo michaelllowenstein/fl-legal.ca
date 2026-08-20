@@ -12,6 +12,39 @@ import { config } from '../config';
 
 const RESEND_KEY = config.email.apiKey ?? '';
 
+function validateEmailConfig(): void {
+  if (!config.email.apiKey) {
+    throw new Error(
+      'RESEND_API_KEY is required',
+    );
+  }
+
+  if (!config.email.fromEmail) {
+    throw new Error(
+      'EMAIL_FROM is required',
+    );
+  }
+
+  if (
+    config.isProd &&
+    config.email.fromEmail.endsWith('@resend.dev')
+  ) {
+    throw new Error(
+      'Production email cannot use the resend.dev test sender. ' +
+      'Configure EMAIL_FROM with a verified custom domain.',
+    );
+  }
+
+  if (
+    config.isProd &&
+    config.email.testRecipient
+  ) {
+    throw new Error(
+      'TEST_EMAIL_RECIPIENT must not be configured in production.',
+    );
+  }
+}
+
 console.log('[mailer] ──────────────────────────────────────────────');
 console.log('[mailer] Initialising Resend email service');
 console.log('[mailer]   NODE_ENV:         ', config.nodeEnv);
@@ -25,9 +58,7 @@ console.log('[mailer]   replyTo:          ', config.email.replyTo || '(not set)'
 console.log('[mailer]   testRecipient:    ', config.email.testRecipient || '(not set — real addresses)');
 console.log('[mailer] ──────────────────────────────────────────────');
 
-if (!RESEND_KEY) {
-  console.error('[mailer] ⚠ RESEND_API_KEY is empty — all sends will fail');
-}
+validateEmailConfig();
 
 const resend = new Resend(RESEND_KEY);
 
@@ -172,9 +203,30 @@ export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise
     (data.phone ? `Phone:   ${data.phone}\n` : '') +
     (data.practiceArea ? `Matter:  ${data.practiceArea}\n` : '') +
     `\nMessage:\n${data.message}`;
+    await send({
+      subject,
+      html,
+      text,
+      replyTo: data.email,
+    });
 
-  await send({ subject, html, text, replyTo: data.email });
-  await sendClientConfirmation(data.name, data.email);
+    try {
+      await sendClientConfirmation(
+        data.name,
+        data.email,
+      );
+    } catch (error) {
+      console.error(
+        '[mailer] Client confirmation failed',
+        {
+          recipient: data.email,
+          error:
+            error instanceof Error
+              ? error.message
+              : String(error),
+        },
+      );
+    }
 }
 
 async function sendClientConfirmation(name: string, toEmail: string): Promise<void> {
