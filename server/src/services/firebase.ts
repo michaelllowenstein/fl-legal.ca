@@ -38,11 +38,20 @@
  *   3. Three inline env vars (FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL,
  *      FIREBASE_PRIVATE_KEY) — kept as a fallback but FIREBASE_PRIVATE_KEY is
  *      fragile on Vercel; prefer option 1 for any new environment setup.
+ *
+ * ── Offline fallback ──────────────────────────────────────────────────────────
+ *
+ *   If Firebase can't be reached (bad/revoked credentials, outage, timeout),
+ *   dbGet() serves public content (siteContent, blog, profiles, nav, calcConfig)
+ *   from the bundled snapshot in data/site-snapshot.ts. Writes still fail —
+ *   the snapshot is read-only. A failed initFirebase() no longer crashes the
+ *   API, so routes that don't need Firebase (inquiry emails, auth) keep working.
  */
 import admin from 'firebase-admin';
 import * as fs from 'fs';
 import * as path from 'path';
 import { config } from '../config';
+import { snapshotGet, snapshotMeta } from './content-snapshot';
 
 // ── Root node ─────────────────────────────────────────────────────────────────
 //
@@ -56,8 +65,37 @@ function normalized(logicalPath: string): string {
 
 // ── Initialization ────────────────────────────────────────────────────────────
 
+/** How long a live read may take before the snapshot is served instead. */
+const READ_TIMEOUT_MS = 5000;
+
+let firebaseReady = false;
+let firebaseInitError: unknown = null;
+
+/** True once the Admin SDK initialised successfully. */
+export function isFirebaseReady(): boolean {
+  return firebaseReady;
+}
+
+/**
+ * Initialise the Admin SDK. Never throws: on failure the error is logged and
+ * kept, reads fall back to the bundled snapshot and writes reject with it.
+ */
 export function initFirebase(): void {
-  if (admin.apps.length > 0) return; // already initialised
+  if (admin.apps.length > 0) { firebaseReady = true; return; }
+  try {
+    initFirebaseOrThrow();
+    firebaseReady = true;
+  } catch (err) {
+    firebaseInitError = err;
+    console.error(
+      '✗ Firebase Admin init failed — public reads will use the bundled snapshot ' +
+        `(${snapshotMeta.generatedAt}); writes will fail.\n`,
+      err,
+    );
+  }
+}
+
+function initFirebaseOrThrow(): void {
 
   let credential: admin.credential.Credential;
 
@@ -117,16 +155,54 @@ export function initFirebase(): void {
 let _db: admin.database.Database | null = null;
 
 export function db(): admin.database.Database {
+  if (!firebaseReady) {
+    throw firebaseInitError instanceof Error
+      ? firebaseInitError
+      : new Error('Firebase Admin is not initialised.');
+  }
   if (!_db) _db = admin.database();
   return _db;
 }
 
+function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`Firebase read timed out after ${READ_TIMEOUT_MS}ms: ${label}`)),
+      READ_TIMEOUT_MS,
+    );
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+let warnedFallback = false;
+
 // ── CRUD helpers ──────────────────────────────────────────────────────────────
 
-/** Read a logical path (auto-prefixed with /public). */
+/**
+ * Read a logical path (auto-prefixed with /public).
+ * Falls back to the bundled snapshot for public content if the live read fails.
+ */
 export async function dbGet<T = unknown>(logicalPath: string): Promise<T | null> {
-  const snap = await db().ref(normalized(logicalPath)).once('value');
-  return snap.exists() ? (snap.val() as T) : null;
+  try {
+    const snap = await withTimeout<admin.database.DataSnapshot>(
+      db().ref(normalized(logicalPath)).once('value'),
+      logicalPath,
+    );
+    return snap.exists() ? (snap.val() as T) : null;
+  } catch (err) {
+    const fallback = snapshotGet<T>(logicalPath);
+    if (fallback === undefined) throw err; // not public content — keep normal error path
+    if (!warnedFallback) {
+      warnedFallback = true;
+      console.warn(
+        `⚠ Firebase read failed — serving bundled snapshot (${snapshotMeta.generatedAt}) ` +
+          `for ${logicalPath}:`,
+        err instanceof Error ? err.message : err,
+      );
+    }
+    return fallback;
+  }
 }
 
 /** Set (overwrite) a logical path. */
@@ -169,3 +245,4 @@ export async function dbRemove(logicalPath: string): Promise<void> {
 export async function dbMultiUpdate(updates: Record<string, unknown>): Promise<void> {
   await db().ref('/').update(updates);
 }
+
