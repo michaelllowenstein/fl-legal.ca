@@ -39,7 +39,31 @@ const ICONS: Record<string, string> = {
   selector: 'app-fl-icon',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<span class="inline-flex items-center justify-center" [innerHTML]="svg()"></span>`,
+  template: `<span class="fl-icon-box" [innerHTML]="svg()"></span>`,
+  // The host is a custom element (display: inline by default), so the w-* / h-*
+  // classes callers put on <app-fl-icon> were ignored and the unsized SVG
+  // collapsed to 0px wide. Make the host a sized box and let the SVG fill it.
+  styles: `
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 1.25rem;   /* default; overridden by w-* / h-* on the host */
+      height: 1.25rem;
+      line-height: 0;
+    }
+    .fl-icon-box {
+      display: inline-flex;
+      width: 100%;
+      height: 100%;
+    }
+    .fl-icon-box ::ng-deep svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  `,
 })
 export class FLIcon {
   name = input.required<string>();

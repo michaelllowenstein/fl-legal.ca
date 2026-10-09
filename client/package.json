@@ -15,6 +15,9 @@
     "ngo:pipe": "node scripts/gen.mjs --pipe",
     "ngo:comp": "node scripts/gen.mjs",
     "ngo": "node scripts/gen.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "snapshot:soft": "node scripts/snapshot.mjs --soft",
+    "snapshot:check": "node scripts/snapshot.mjs --dry",
     "test": "ng test",
     "lint": "ng lint"
   },

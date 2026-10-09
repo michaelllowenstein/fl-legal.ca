@@ -4,6 +4,8 @@ import { Database, ref, get, set as dbSet } from '@angular/fire/database';
 import { firstValueFrom } from 'rxjs';
 import { TabId } from '@schema/models';
 import { DebugService } from '@core/services/debug';
+import { snapshotCalcConfig } from '@schema/snapshot';
+import { FIREBASE_READ_TIMEOUT_MS } from '@core/services/site';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -158,7 +160,11 @@ export class CalculatorConfigService {
     // 1. Firebase client SDK
     this.log.debug('Trying Firebase at', FIREBASE_PATH);
     try {
-      const snapshot = await get(ref(this.db, FIREBASE_PATH));
+      const snapshot = await Promise.race([
+        get(ref(this.db, FIREBASE_PATH)),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Firebase read timed out')), FIREBASE_READ_TIMEOUT_MS)),
+      ]);
       if (snapshot.exists() && snapshot.val()) {
         const remote = this.mergeWithDefaults(snapshot.val() as Partial<CalculatorConfig>);
         this.lastSyncEntry.set(new Date().toISOString());
@@ -240,16 +246,28 @@ export class CalculatorConfigService {
   private loadLocal(): CalculatorConfig {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        this.log.debug('No localStorage cache \u2014 using hardcoded defaults');
-        return structuredClone(DEFAULT_CALCULATOR_CONFIG);
-      }
+      if (!raw) return this.bundledConfig();
       this.log.debug('Loaded from localStorage');
       return this.mergeWithDefaults(JSON.parse(raw));
     } catch (err) {
-      this.log.warn('localStorage parse failed \u2014 using defaults', err);
-      return structuredClone(DEFAULT_CALCULATOR_CONFIG);
+      this.log.warn('localStorage parse failed \u2014 using bundled config', err);
+      return this.bundledConfig();
     }
+  }
+
+  /**
+   * Config compiled into the bundle: the last Firebase calcConfig captured by
+   * `npm run snapshot` (merged over the defaults), or the hardcoded defaults
+   * if calcConfig had never been saved when the snapshot was taken.
+   */
+  private bundledConfig(): CalculatorConfig {
+    const snap = snapshotCalcConfig<Partial<CalculatorConfig>>();
+    if (snap) {
+      this.log.debug('No localStorage cache \u2014 using bundled Firebase snapshot');
+      return this.mergeWithDefaults(snap);
+    }
+    this.log.debug('No localStorage cache \u2014 using hardcoded defaults');
+    return structuredClone(DEFAULT_CALCULATOR_CONFIG);
   }
 
   private cacheLocal(config: CalculatorConfig): void {
