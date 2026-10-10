@@ -111,7 +111,7 @@
             },
             "local": {
               "buildTarget": "fl-legal.ca:build:local",
-              "sslKey": "cert/local/localhost.decrypted.key",
+              "sslKey": "cert/local/localhost.key",
               "sslCert": "cert/local/localhost.crt",
               "proxyConfig": "proxy.conf.json",
               "ssl": true

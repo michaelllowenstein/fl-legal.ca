@@ -4,18 +4,41 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DialogService } from '@components/factory/dialog/service';
-import { FLIcon } from '@components/ui/icon';
-import { MapsLinkComponent } from '@components/feature/maps-link';
 import { InquiryDialog } from '@components/ui/dialog/inquiry';
+import { OfficeMap } from '@components/feature/office-map';
 import { LoggerService } from '@core/services/logger';
 import { SeoService } from '@core/services/seo';
+import { FLIcon } from '@components/ui/icon';
 import { env } from '@env/environment';
 
 @Component({
   selector:    'app-contact-us',
   standalone:  true,
-  imports:     [MapsLinkComponent, FLIcon],
+  imports:     [OfficeMap, FLIcon],
   templateUrl: './index.html',
+  styles: [`
+    .contact-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 52px;
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 45px 24px;
+      align-items: start;
+    }
+
+    .contact-map-column {
+      min-width: 0;
+    }
+
+    @media (max-width: 768px) {
+      .contact-content {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 30px 20px;
+      }
+    }
+    `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactUsPage implements OnInit {
@@ -31,18 +54,12 @@ export class ContactUsPage implements OnInit {
   readonly officeLat = signal<number>(this.officeLatitude);
   readonly officeLong = signal<number>(this.officeLongitude);
  
-  readonly mapsEmbedUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-    env.mapsEmbedApiKey
-      ? `https://www.google.com/maps/embed/v1/place?key=${env.mapsEmbedApiKey}&q=${encodeURIComponent(this.officeName)}`
-      : `https://www.openstreetmap.org/export/embed.html?bbox=${this.officeLong() - 0.005},${this.officeLat() - 0.003},${this.officeLong() + 0.005},${this.officeLat() + 0.003}&layer=mapnik&marker=${this.officeLat},${this.officeLong()}`,
-  );
- 
   ngOnInit() {
     this.seo.set({
       title: 'Contact Us',
       description: 'Get in touch with Fric, Lowenstein & Co. LLP. Our Calgary law office is available to discuss your legal needs.',
     });
-    const mapProvider = env.mapsEmbedApiKey ? 'google' : 'openstreetmap';
+    const mapProvider = 'openstreetmap';
     this.log.info('Contact Us page loaded', {
       mapProvider,
       officeName: this.officeName,
