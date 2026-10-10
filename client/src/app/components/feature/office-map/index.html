@@ -1,0 +1,28 @@
+
+<section class="office-map-wrapper"
+         aria-label="Office location">
+
+  <div
+    #mapContainer
+    class="office-map"
+    role="region"
+    aria-label="Interactive map showing the office location">
+  </div>
+
+  <div class="office-map-footer">
+    <span class="office-map-address">
+      {{ office.address }} — Southcentre Executive Tower,
+      Calgary
+    </span>
+
+    <a
+      [href]="directionsUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="office-map-directions">
+      Get Directions
+      <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+</section>
