@@ -495,17 +495,6 @@ export const SITE_SNAPSHOT: ServerSiteSnapshot = {
       "calltobar": "June 2017 ",
       "workexperience": "Marc A. Lowenstein joined the firm in 2015 after completing his law\n            degree at Bond University in Australia. Before law school Marc spent more than 10 years\n            in the construction industry in various positions ranging from a labourer, foreman,\n            superintendent up to a Project Engineer for a large heavy civil construction company.\n            Marc has also worked as a National Construction Safety Officer and consultant where he built,\n            implemented and supervised health and safety programs for companies in the construction industry.\n            Marc is focusing his practice on real estate and matters relating to construction including contracts,\n            litigation and dispute resolution. Marc also recently joined the ADR Institute of Alberta and is\n            working towards becoming a Qualified Arbitrator (Q. Arb.). "
     },
-    "bronwyn": {
-      "id": "bronwyn",
-      "image": "../../../../assets/site/headshots/bronwyn/bronwyn.png",
-      "name": "Bronwyn E. Cram",
-      "education": "Queen’s University, B.Sc (Life Sciences) (Honors) 2019;\n    University of Calgary, J.D. (2023).",
-      "calltobar": "Alberta 2024",
-      "workexperience": "Bronwyn joined Fric, Lowenstein & Co. LLP in 2025. Prior to joining the firm,\n    Bronwyn gained experience in civil litigation, wills and estates, and Personal Injury.Her practice now\n    focuses on a wide range of areas including wills & estates, real estate, foreclosures, litigation,\n    as well as cohabitation and prenuptial agreements.Bronwyn works closely with clients to navigate\n    legal matters, with a focus on providing practical and effective solutions across diverse practice\n    areas.",
-      "achievements": [
-        "Member of the Calgary Bar Association"
-      ]
-    },
     "tracy": {
       "id": "tracy",
       "image": "../../../../assets/site/headshots/tracy/tracyv2.jpg",
@@ -545,11 +534,6 @@ export const SITE_SNAPSHOT: ServerSiteSnapshot = {
         "display": "Marc Lowenstein",
         "value": "marc",
         "order": 5
-      },
-      {
-        "display": "Bronwyn E. Cram",
-        "value": "bronwyn",
-        "order": 7
       },
       {
         "display": "Tracy Hildenbrand",
