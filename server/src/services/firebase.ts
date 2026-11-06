@@ -10,7 +10,7 @@
  *   public/
  *     blog/           ← blog posts (post1, post2, …)
  *     nav/            ← members[], priceSections[]
- *     profiles/       ← bill, howard, anthony, tami, york, marc, bronwyn, tracy
+ *     profiles/       ← bill, howard, anthony, tami, york, marc, tracy
  *     siteContent/    ← home, aboutUs, areasOfLaw, faq, pricing
  *
  * Every helper function in this file automatically prepends "public/" to the

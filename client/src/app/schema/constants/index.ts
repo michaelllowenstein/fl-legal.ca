@@ -41,11 +41,6 @@ export const MEMBERS: ProfileNav[] = [
     order: 5,
   },
   {
-    display: 'Bronwyn E. Cram',
-    value: 'bronwyn',
-    order: 7,
-  },
-  {
     display: 'Tracy Hildenbrand',
     value: 'tracy',
     order: 7,
@@ -194,23 +189,6 @@ export const PROFILES: Profile[] = [
             Marc is focusing his practice on real estate and matters relating to construction including contracts,
             litigation and dispute resolution. Marc also recently joined the ADR Institute of Alberta and is
             working towards becoming a Qualified Arbitrator (Q. Arb.). `,
-  },
-  {
-    id: 'bronwyn',
-    image: '../../../../assets/site/headshots/bronwyn/bronwyn.png',
-    name: 'Bronwyn E. Cram',
-    education: `Queen’s University, B.Sc (Life Sciences) (Honors) 2019;
-    University of Calgary, J.D. (2023).`,
-    calltobar: 'Alberta 2024',
-    workexperience: `Bronwyn joined Fric, Lowenstein & Co. LLP in 2025. Prior to joining the firm,
-    Bronwyn gained experience in civil litigation, wills and estates, and Personal Injury.Her practice now
-    focuses on a wide range of areas including wills & estates, real estate, foreclosures, litigation,
-    as well as cohabitation and prenuptial agreements.Bronwyn works closely with clients to navigate
-    legal matters, with a focus on providing practical and effective solutions across diverse practice
-    areas.`,
-    achievements: [
-      'Member of the Calgary Bar Association'
-    ],
   },
   {
     id: 'tracy',
